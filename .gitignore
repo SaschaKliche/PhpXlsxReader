@@ -1,7 +1,7 @@
 /.idea/
 /.phpunit.cache/test-results
 /.phpunit.result.cache
-/tests/files
+/Testfiles/
 /vendor/
 ~$*.xlsx
 composer.lock
