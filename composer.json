@@ -1,0 +1,33 @@
+{
+  "name": "saschakliche/phpxlsxreader",
+  "type": "library",
+  "description": "A very simple library for reading Office Open XML (OOXML) spreadsheet files (XLSX)",
+  "keywords": ["XLSX", "OOXML", "PHP", "Spreadsheet"],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Sascha Kliche",
+      "email": "github@skliche.de",
+      "homepage": "https://github.com/SaschaKliche"
+    }
+  ],
+  "require": {
+    "php": "^8.3",
+    "ext-ctype": "*",
+    "ext-xmlreader": "*",
+    "ext-zip": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^12"
+  },
+  "autoload": {
+    "psr-4": {
+      "SaschaKliche\\PhpXlsxReader\\": "lib/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SaschaKliche\\PhpXlsxReader\\Tests\\": "tests/"
+    }
+  }
+}

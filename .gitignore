@@ -1,0 +1,7 @@
+/.idea/
+/.phpunit.cache/test-results
+/.phpunit.result.cache
+/tests/files
+/vendor/
+~$*.xlsx
+composer.lock
