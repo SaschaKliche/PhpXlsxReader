@@ -343,13 +343,15 @@ the number format of the cell.
 > E.g. the format `TT.MM.JJ hh:mm:ss` in a German UI would be stored as 
 > `dd/mm/yy\ hh:mm:ss` in the file.
 
-The closure receives two arguments:
+The closure receives the following arguments:
 ```php
-function (mixed $value, string $rawValue)
+function (mixed $value, string $rawValue, string $cellAddress, string $worksheetName)
 ```
-`$rawValue` contains the raw string from the cell value that has been read from the file.
-`$value` contains the value that would be returned by default from the library,
+- `$rawValue` contains the raw string from the cell value that has been read from the file.
+- `$value` contains the value that would be returned by default from the library,
 i.e. int/float/string/DateTime.
+- `$cellAddress` contains the cell address (e.g. `'A7'`).
+- `$worksheetName` contains the name of the worksheet (e.g. `'Sheet1'`).
 
 The default format IDs can be found in the array `Styles::BUILTIN_FORMATS`.
 

@@ -281,9 +281,9 @@ class WorksheetReader extends AbstractReader
             $cellValue = $this->convertRawValue($rawValue, $dataType, $cellFormatString);
 
             if ($cellFormatString !== '' && array_key_exists($cellFormatString, $this->customFormats)) {
-                $cellValue = $this->customFormats[$cellFormatString]($cellValue, $rawValue);
+                $cellValue = $this->customFormats[$cellFormatString]($cellValue, $rawValue, $originalCellAddress, $this->worksheetName);
             } elseif ($formatId !== '' && array_key_exists($formatId, $this->customFormats)) {
-                $cellValue = $this->customFormats[$formatId]($cellValue, $rawValue);
+                $cellValue = $this->customFormats[$formatId]($cellValue, $rawValue, $originalCellAddress, $this->worksheetName);
             }
         }
 
