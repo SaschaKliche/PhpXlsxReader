@@ -10,6 +10,12 @@ use SaschaKliche\PhpXlsxReader\XlsxReader;
 class ReaderTest extends AbstractTestCase
 {
     #[Test]
+    function it_provides_a_version()
+    {
+        self::assertIsString(XlsxReader::VERSION);
+    }
+
+    #[Test]
     function it_selects_the_worksheets_to_load()
     {
         $reader = new XlsxReader();
