@@ -2,7 +2,7 @@
 
 This library provides a simple interface to read Office Open XML (OOXML) spreadsheet files (XLSX).
 
-Main features
+## Main features
 - Read the whole file into an [array](#readasarray-reading-a-workbook-into-an-array) 
   or read a file [row by row](#read-reading-a-workbook-using-generators)
   to reduce memory consumption
@@ -98,6 +98,7 @@ readAsArray(): array
 readWithHeader(int|array $headerRowIndex = 0): array
 
 // retrieving information about the workbook
+getHeaders(): array
 getMetadata(): Metadata
 getWorksheetNames(): array
 ```
@@ -191,6 +192,7 @@ Alternatively, the row that should be used as a header row can be specified as a
 either globally or per worksheet.
 
 The header row itself will not be returned.
+The headers itself can be retrieved afterwards with `getHeaders()`;
 
 Each returned row will be an associative array where columns are not indexed by the cell address (e.g. `A3`)
 but by the value of the header row's column instead.
@@ -241,7 +243,26 @@ $data = $reader->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
 // $data[<worksheetname (string)>][<rowindex (int)>][<header (string)>]
 ```
 
-The default is 0, i.e. the first available row is used as header.
+The default for `$headerRowIndex` is `0`, i.e. the first available row is used as header.
+
+To retrieve the headers after reading the file, use `getHeaders()`:
+
+Syntax:
+```php
+XlsxReader::getHeaders(): array
+```
+
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$reader = new XlsxReader();
+$reader->open(<pathToInputFile>);
+$reader->readWithHeader();
+
+$headers = $reader->getHeaders();
+
+// $headers[<worksheetname (string)>][<columnindex (int)>] = [<header (string)>]
+```
 
 ### `getWorksheetNames()`: Retrieve the worksheet names of a workbook
 

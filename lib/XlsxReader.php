@@ -33,6 +33,8 @@ class XlsxReader extends AbstractReader
     protected const string WORKBOOK_SHEET_ATTRIBUTE_RELATIONSHIP_NAMESPACE = 'r';
 
     protected string $filePath;
+    /** @var string[] */
+    protected array $headers;
     protected bool $workbookOpened = false;
     protected bool $worksheetsLoaded = false;
     /** @var string[] */
@@ -66,6 +68,7 @@ class XlsxReader extends AbstractReader
         }
 
         $this->metadata = null;
+        $this->headers = [];
         $this->worksheetNames = [];
 
         $readingSheets = false;
@@ -215,6 +218,7 @@ class XlsxReader extends AbstractReader
                 $header = $rows[$firstKey];
                 unset($rows[$firstKey]);
             }
+            $this->headers[$worksheetName] = $header;
 
             foreach ($rows as $rowIndex => &$row) {
 
@@ -233,6 +237,11 @@ class XlsxReader extends AbstractReader
         }
 
         return $workbookData;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 
     public function getMetadata(): Metadata

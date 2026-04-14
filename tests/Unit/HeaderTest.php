@@ -18,6 +18,7 @@ class HeaderTest extends AbstractTestCase
 
         $data = $reader->worksheets(['Sheet1'])->readWithHeader();
 
+        self::assertCount(1, $data); // only one worksheet
         self::assertArrayHasKey('Sheet1', $data);
 
         // first row containing headers is removed
@@ -33,6 +34,14 @@ class HeaderTest extends AbstractTestCase
         self::assertArrayHasKey('Column A', $data['Sheet1'][2]);
         self::assertArrayHasKey('Column B', $data['Sheet1'][2]);
         self::assertArrayHasKey('Column C', $data['Sheet1'][2]);
+
+        // readWithHeader() keeps track of the header per worksheet
+        $headers = $reader->getHeaders();
+        self::assertCount(1, $headers);
+        self::assertArrayHasKey('Sheet1', $headers);
+        self::assertEquals('Column A', $headers['Sheet1'][1]);
+        self::assertEquals('Column B', $headers['Sheet1'][2]);
+        self::assertEquals('Column C', $headers['Sheet1'][3]);
     }
 
     #[Test]
@@ -99,6 +108,17 @@ class HeaderTest extends AbstractTestCase
         self::assertArrayHasKey('Column A', $data['Sheet2'][2]);
         self::assertArrayHasKey('Column B', $data['Sheet2'][2]);
         self::assertArrayHasKey('Column C', $data['Sheet2'][2]);
+
+        $headers = $reader->getHeaders();
+        self::assertCount(2, $headers);
+        self::assertArrayHasKey('Sheet1', $headers);
+        self::assertEquals('Column A', $headers['Sheet1'][1]);
+        self::assertEquals('Column B', $headers['Sheet1'][2]);
+        self::assertEquals('Column C', $headers['Sheet1'][3]);
+        self::assertArrayHasKey('Sheet2', $headers);
+        self::assertEquals('Column A', $headers['Sheet2'][1]);
+        self::assertEquals('Column B', $headers['Sheet2'][2]);
+        self::assertEquals('Column C', $headers['Sheet2'][3]);
     }
 
     #[Test]
