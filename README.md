@@ -90,7 +90,7 @@ foreach ($reader->read() as $worksheetName => $rows) {
 The following methods are provided by `XlsxReader`:
 ```php
 // opening a file
-open(string $filePath): void
+open(string $filePath): XlsxReader
 
 // reading the actual data
 read(): Generator
@@ -211,9 +211,10 @@ Use first available row as header for all worksheets:
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->readWithHeader();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->readWithHeader();
 
 // $data[<worksheetname (string)>][<rowindex (int)>][<header (string)>]
 ```
@@ -223,9 +224,10 @@ Use third row as header for all worksheets:
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->readWithHeader(3);
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->readWithHeader(3);
 
 // $data[<worksheetname (string)>][<rowindex (int)>][<header (string)>]
 ```
@@ -235,10 +237,11 @@ Use different header rows per worksheet:
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
-// other existing worksheets will use the first available row as header
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
+    // other existing worksheets will use the first available row as header
 
 // $data[<worksheetname (string)>][<rowindex (int)>][<header (string)>]
 ```
@@ -256,8 +259,7 @@ XlsxReader::getHeaders(): array
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
-$reader->readWithHeader();
+$reader->open(<pathToInputFile>)->readWithHeader();
 
 $headers = $reader->getHeaders();
 
@@ -286,9 +288,10 @@ use SaschaKliche\PhpXlsxReader\Model\Metadata;
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$metadata = $reader->getMetadata();     // Metadata instance
+$metadata = $reader
+    ->open(<pathToInputFile>)
+    ->getMetadata();                    // Metadata instance
 
 $metadata->has(<property_name>);        // bool
 $metadata->get(<property_name>);        // string|null
@@ -384,7 +387,7 @@ use SaschaKliche\PhpXlsxReader\XlsxReader;
 $reader = new XlsxReader();
 $reader->open(<pathToInputFile>);
 
-$sheet1 = $reader->customFormats([
+$data = $reader->customFormats([
     // <id> => static fn(mixed $value, string $rawValue) => $value,
     '9' => static fn(int $number) => number_format($number * 100, 2) . '%',
     '14' => static fn(DateTime $date) => $date->format('d.m.Y'),
@@ -406,9 +409,11 @@ The equivalent of setting the option `Configuration::IGNORE_MISSING_CELLS` to `t
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->includeMissingCells()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->includeMissingCells()
+    ->readAsArray();
 ```
 
 ### `skipMissingCells()`: Ignore missing cells
@@ -421,9 +426,11 @@ This is the default configuration.
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->skipMissingCells()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>);
+    ->skipMissingCells()
+    ->readAsArray();
 ```
 
 ### `includeMissingRows()`: Include missing rows
@@ -434,9 +441,11 @@ The equivalent of setting the option `Configuration::IGNORE_MISSING_ROWS` to `tr
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->includeMissingRows()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->includeMissingRows()
+    ->readAsArray();
 ```
 
 ### `skipMissingRows()`: Ignore missing rows
@@ -449,9 +458,11 @@ This is the default configuration.
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->skipMissingRows()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->skipMissingRows()
+    ->readAsArray();
 ```
 
 ### `returnCellObjects()`: Return Cell object instances instead of cell values
@@ -474,8 +485,12 @@ use SaschaKliche\PhpXlsxReader\XlsxReader;
 $reader = new XlsxReader();
 $reader->open(<pathToInputFile>);
 
-$data = $reader->returnCellObjects()->readAsArray(); // don't read formulas and hyperlinks
-$data = $reader->returnCellObjects(readFormulas: true, readHyperlinks: true)->readAsArray(); // read formulas and hyperlinks
+// don't read formulas and hyperlinks
+$data = $reader->returnCellObjects()->readAsArray();
+
+// read formulas and hyperlinks
+$data = $reader->returnCellObjects(readFormulas: true, readHyperlinks: true)->readAsArray();
+
 // $data[<worksheetname (string)>][<rowindex (int)>][<celladdress (string)>][<object (Cell)>]
 ```
 
@@ -489,9 +504,12 @@ The equivalent of setting the option `Configuration::USE_CELL_ADDRESS` to `true`
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->useCellAddress()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->useCellAddress()
+    ->readAsArray();
+
 // $data[<worksheetname (string)>][<rowindex (int)>][<celladdress (string)>][<value (int|float|string|DateTime)>]
 ```
 
@@ -503,9 +521,12 @@ The equivalent of setting the option `Configuration::USE_CELL_ADDRESS` to `false
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->useCellAddress()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->useCellAddress()
+    ->readAsArray();
+
 // $data[<worksheetname (string)>][<rowindex (int)>][<columnindex (int)>][<value (int|float|string|DateTime)>]
 ```
 
@@ -522,9 +543,11 @@ This is the default configuration.
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->useDateSystem1900()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->useDateSystem1900()
+    ->readAsArray();
 ```
 
 ### `useDateSystem1904()`: Use 1904 date system
@@ -538,9 +561,11 @@ If date values are not calculate correctly, try setting it explicitly.
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->useDateSystem1904()->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->useDateSystem1904()
+    ->readAsArray();
 ```
 
 ### `columns()`: Selecting the columns to load from the worksheets
@@ -557,9 +582,11 @@ Columns can either be requested "globally" for each existing worksheet ...
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->columns([2, 3, 4, 5])->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->columns([2, 3, 4, 5])
+    ->readAsArray();
 ```
 
 ... or explicitly for a specific worksheet ...
@@ -568,9 +595,11 @@ $data = $reader->columns([2, 3, 4, 5])->readAsArray();
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->columns(['Sheet1' => [2, 3, 4, 5]])->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->columns(['Sheet1' => [2, 3, 4, 5]])
+    ->readAsArray();
 ```
 
 The columns can be listed individually as shown above or providing `min` and/or `max` values:
@@ -597,9 +626,12 @@ as long as they are not beyond the last existing column on the worksheet.
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->includeMissingCells()->columns(['Sheet1' => [2, 3, 4, 5]])->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->includeMissingCells()
+    ->columns(['Sheet1' => [2, 3, 4, 5]])
+    ->readAsArray();
 ```
 
 > [!CAUTION]
@@ -622,9 +654,11 @@ Rows can either be requested "globally" for each existing worksheet ...
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->rows([2, 3, 4, 5])->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->rows([2, 3, 4, 5])
+    ->readAsArray();
 ```
 
 ... or explicitly for a specific worksheet ...
@@ -633,9 +667,11 @@ $data = $reader->rows([2, 3, 4, 5])->readAsArray();
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->rows(['Sheet1' => [2, 3, 4, 5]])->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->rows(['Sheet1' => [2, 3, 4, 5]])
+    ->readAsArray();
 ```
 
 By default, non existing rows will not be returned even if they are requested.
@@ -646,9 +682,12 @@ as long as they are not beyond the last existing row on the worksheet.
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->includeMissingRows()->rows(['Sheet1' => [2, 3, 4, 5]])->readAsArray();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->includeMissingRows()
+    ->rows(['Sheet1' => [2, 3, 4, 5]])
+    ->readAsArray();
 ```
 
 > [!CAUTION]
@@ -667,9 +706,12 @@ The default is an empty array (`[]`) meaning all worksheets are loaded.
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$sheet1 = $reader->worksheets(['sheet1', 'sheet2'])->readAsArray();
+$sheet1 = $reader
+    ->open(<pathToInputFile>)
+    ->worksheets(['sheet1', 'sheet2'])
+    ->readAsArray();
+
 // $data['sheet1'][<rowindex (int)>][<celladdress (string)>]
 // $data['sheet2'][<rowindex (int)>][<celladdress (string)>]
 ```
@@ -779,9 +821,10 @@ from the `XlsxReader` instance:
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$data = $reader->readWithHeader();
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->readWithHeader();
 
 $duration = $reader->getDurationInSeconds();   // float
 $memory = $reader->getMemoryUsage();           // int

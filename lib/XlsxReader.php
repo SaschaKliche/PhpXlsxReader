@@ -55,7 +55,7 @@ class XlsxReader extends AbstractReader
      * Load the workbook.xml to determine the date format used and
      * retrieve the names and relationship IDs of the worksheets.
      */
-    public function open(string $filePath): void
+    public function open(string $filePath): self
     {
         $start = hrtime(true);
 
@@ -116,6 +116,8 @@ class XlsxReader extends AbstractReader
         $this->durationInSeconds = (hrtime(true) - $start) / 1e9;
         $this->memoryUsage = memory_get_usage();
         $this->memoryPeakUsage = memory_get_peak_usage();
+
+        return $this;
     }
 
     /**

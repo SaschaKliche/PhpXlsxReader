@@ -73,9 +73,10 @@ class HeaderTest extends AbstractTestCase
     function it_treats_the_configured_line_as_headers()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
 
-        $data = $reader->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
 
         self::assertArrayHasKey('Sheet1', $data);
 
