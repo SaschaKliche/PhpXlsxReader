@@ -36,14 +36,6 @@ class HeaderTest extends AbstractTestCase
         self::assertArrayHasKey('Column A', $data['Sheet1'][2]);
         self::assertArrayHasKey('Column B', $data['Sheet1'][2]);
         self::assertArrayHasKey('Column C', $data['Sheet1'][2]);
-
-        // readWithHeader() keeps track of the header per worksheet
-        $headers = $reader->getHeaders();
-        self::assertCount(1, $headers);
-        self::assertArrayHasKey('Sheet1', $headers);
-        self::assertEquals('Column A', $headers['Sheet1'][1]);
-        self::assertEquals('Column B', $headers['Sheet1'][2]);
-        self::assertEquals('Column C', $headers['Sheet1'][3]);
     }
 
     #[Test]
@@ -113,21 +105,6 @@ class HeaderTest extends AbstractTestCase
         self::assertArrayHasKey('Column A', $data['Sheet2'][2]);
         self::assertArrayHasKey('Column B', $data['Sheet2'][2]);
         self::assertArrayHasKey('Column C', $data['Sheet2'][2]);
-
-        $headers = $reader->getHeaders();
-        self::assertCount(3, $headers);
-        self::assertArrayHasKey('Sheet1', $headers);
-        self::assertEquals('Column A', $headers['Sheet1'][1]);
-        self::assertEquals('Column B', $headers['Sheet1'][2]);
-        self::assertEquals('Column C', $headers['Sheet1'][3]);
-        self::assertArrayHasKey('Sheet2', $headers);
-        self::assertEquals('Column A', $headers['Sheet2'][1]);
-        self::assertEquals('Column B', $headers['Sheet2'][2]);
-        self::assertEquals('Column C', $headers['Sheet2'][3]);
-        self::assertArrayHasKey('Sheet3', $headers);
-        self::assertEquals('Column A', $headers['Sheet3'][1]);
-        self::assertEquals('Column B', $headers['Sheet3'][2]);
-        self::assertEquals('Column C', $headers['Sheet3'][3]);
     }
 
     #[Test]
@@ -140,5 +117,68 @@ class HeaderTest extends AbstractTestCase
         $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
 
         $reader->readWithHeader();
+    }
+
+    #[Test]
+    function it_provides_access_to_the_headers_from_all_worksheets()
+    {
+        $reader = new XlsxReader();
+
+        $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
+
+        $headers = $reader->getHeaders();
+
+        self::assertEquals(
+            [
+                'Sheet1' => [1 => 'Column A', 'Column B', 'Column C'],
+                'Sheet2' => [1 => 'Column A', 'Column B', 'Column C'],
+                'Sheet3' => [1 => 'Column A', 'Column B', 'Column C'],
+            ],
+            $headers
+        );
+    }
+
+    #[Test]
+    function it_provides_access_to_the_header_from_a_single_worksheet()
+    {
+        $reader = new XlsxReader();
+
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet3'])
+            ->readWithHeader();
+
+        self::assertEquals(
+            [
+                'Sheet3' => [
+                    2 => ['Column B' => -42, 'Column C' => 0.001],
+                    ['Column A' => 20, 'Column C' => 1],
+                    ['Column A' => 30, 'Column B' => 9.837844, 'Column C' => 2],
+                    ['Column A' => 40, 'Column B' => -273.14],
+                    ['Column A' => 50, 'Column B' => 99.99, 'Column C' => 8],
+                ],
+            ],
+            $data
+        );
+
+        $headersSheet3 = $reader->getHeaders('Sheet3');
+        self::assertEquals([1 => 'Column A', 'Column B', 'Column C'], $headersSheet3);
+        // A naive array_keys(reset($data['Sheet3'])) wouldn't work to retrieve the columns.
+        // That would return a 0-based array containing 'Column B' and 'Column C'
+        // because the first data row does not contain all columns.
+    }
+
+    #[Test]
+    function non_existent_worksheet_throws_an_exception()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No header for worksheet "DoesNotExist"');
+
+        $reader = new XlsxReader();
+        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
+
+        $reader->getHeaders('DoesNotExist');
     }
 }

@@ -98,7 +98,7 @@ readAsArray(): array
 readWithHeader(int|array $headerRowIndex = 0): array
 
 // retrieving information about the workbook
-getHeaders(): array
+getHeaders(string $worksheetName = ''): array
 getMetadata(): Metadata
 getWorksheetNames(): array
 ```
@@ -192,7 +192,8 @@ Alternatively, the row that should be used as a header row can be specified as a
 either globally or per worksheet.
 
 The header row itself will not be returned.
-The headers itself can be retrieved afterwards with `getHeaders()`;
+The headers itself can be retrieved afterwards with
+[`getHeaders()`](#getheaders-retrieve-headers).
 
 Each returned row will be an associative array where columns are not indexed by the cell address (e.g. `A3`)
 but by the value of the header row's column instead.
@@ -248,22 +249,29 @@ $data = $reader
 
 The default for `$headerRowIndex` is `0`, i.e. the first available row is used as header.
 
+#### `getHeaders()`: Retrieve headers
+
 To retrieve the headers after reading the file, use `getHeaders()`:
 
 Syntax:
 ```php
-XlsxReader::getHeaders(): array
+XlsxReader::getHeaders(string $worksheetName = ''): array
 ```
 
+Example:
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
 $reader->open(<pathToInputFile>)->readWithHeader();
 
+// headers for all worksheets
 $headers = $reader->getHeaders();
-
 // $headers[<worksheetname (string)>][<columnindex (int)>] = [<header (string)>]
+
+// headers for a specific worksheet
+$headersSheet1 = $reader->getHeaders('Sheet1');
+// $headersSheet1[<columnindex (int)>] = [<header (string)>]
 ```
 
 ### `getWorksheetNames()`: Retrieve the worksheet names of a workbook

@@ -33,7 +33,7 @@ class XlsxReader extends AbstractReader
     protected const string WORKBOOK_SHEET_ATTRIBUTE_RELATIONSHIP_NAMESPACE = 'r';
 
     protected string $filePath;
-    /** @var string[] */
+    /** @var string[][] */
     protected array $headers;
     protected bool $workbookOpened = false;
     protected bool $worksheetsLoaded = false;
@@ -241,9 +241,20 @@ class XlsxReader extends AbstractReader
         return $workbookData;
     }
 
-    public function getHeaders(): array
+    /**
+     * @return string[]|string[][]
+     */
+    public function getHeaders(string $worksheetName = ''): array
     {
-        return $this->headers;
+        if ($worksheetName === '') {
+            return $this->headers;
+        }
+
+        if (!isset($this->headers[$worksheetName])) {
+            throw new RuntimeException('No header for worksheet "' . $worksheetName. '"');
+        }
+
+        return $this->headers[$worksheetName];
     }
 
     public function getMetadata(): Metadata
