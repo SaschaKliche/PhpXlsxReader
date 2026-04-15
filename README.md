@@ -100,6 +100,7 @@ readWithHeader(int|array $headerRowIndex = 0): array
 // retrieving information about the workbook
 getHeaders(string $worksheetName = ''): array
 getMetadata(): Metadata
+getWorksheetName(): string
 getWorksheetNames(): array
 ```
 
@@ -283,10 +284,29 @@ The names of the worksheets present in a workbook can be retrieved using
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 $reader = new XlsxReader();
-$reader->open(<pathToInputFile>);
 
-$worksheetNames = $reader->getWorksheetNames();
+$worksheetNames = $reader
+    ->open(<pathToInputFile>)
+    ->getWorksheetNames();
+
 // e.g. ['sheet1', 'sheet2', 'sheet3']
+```
+
+### `getWorksheetName()`: Retrieve the name of a single worksheet
+
+The names of the worksheets present in a workbook can be retrieved using
+`XlsxReader::getWorksheetName(int $worksheetIndex)`.
+
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$reader = new XlsxReader();
+
+$worksheetName = $reader
+    ->open(<pathToInputFile>)
+    ->getWorksheetName(2);
+
+// e.g. 'sheet2'
 ```
 
 ### `getMetadata()`: Retrieve workbook metadata

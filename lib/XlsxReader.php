@@ -270,6 +270,18 @@ class XlsxReader extends AbstractReader
         return $this->metadata;
     }
 
+    public function getWorksheetName(int $worksheetIndex): string
+    {
+        $worksheetNames = $this->getWorksheetNames();
+
+        $worksheetIndex--; // array index is 0-based
+        if (!isset($worksheetNames[$worksheetIndex])) {
+            throw new RuntimeException('No worksheet name for index ' . $worksheetIndex);
+        }
+
+        return $worksheetNames[$worksheetIndex];
+    }
+
     /**
      * @return string[]
      */
