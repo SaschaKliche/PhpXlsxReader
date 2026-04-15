@@ -203,7 +203,7 @@ class XlsxReader extends AbstractReader
                 continue;
             }
 
-            $currentHeaderRowIndex = $headerRowIndex[$worksheetName] ?? $headerRowIndex;
+            $currentHeaderRowIndex = $headerRowIndex[$worksheetName] ?? (is_array($headerRowIndex) ? 0 : $headerRowIndex);
             if (is_int($currentHeaderRowIndex) && $currentHeaderRowIndex < 0) {
                 throw new RuntimeException('Header row index must be >= 0');
             }

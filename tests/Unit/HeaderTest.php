@@ -14,9 +14,11 @@ class HeaderTest extends AbstractTestCase
     function it_treats_the_first_line_as_headers()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
 
-        $data = $reader->worksheets(['Sheet1'])->readWithHeader();
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet1'])
+            ->readWithHeader();
 
         self::assertCount(1, $data); // only one worksheet
         self::assertArrayHasKey('Sheet1', $data);
@@ -48,9 +50,11 @@ class HeaderTest extends AbstractTestCase
     function it_treats_the_third_line_as_headers()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
 
-        $data = $reader->worksheets(['Sheet2'])->readWithHeader(3);
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet2'])
+            ->readWithHeader(3);
 
         self::assertArrayHasKey('Sheet2', $data);
 
@@ -111,7 +115,7 @@ class HeaderTest extends AbstractTestCase
         self::assertArrayHasKey('Column C', $data['Sheet2'][2]);
 
         $headers = $reader->getHeaders();
-        self::assertCount(2, $headers);
+        self::assertCount(3, $headers);
         self::assertArrayHasKey('Sheet1', $headers);
         self::assertEquals('Column A', $headers['Sheet1'][1]);
         self::assertEquals('Column B', $headers['Sheet1'][2]);
@@ -120,6 +124,10 @@ class HeaderTest extends AbstractTestCase
         self::assertEquals('Column A', $headers['Sheet2'][1]);
         self::assertEquals('Column B', $headers['Sheet2'][2]);
         self::assertEquals('Column C', $headers['Sheet2'][3]);
+        self::assertArrayHasKey('Sheet3', $headers);
+        self::assertEquals('Column A', $headers['Sheet3'][1]);
+        self::assertEquals('Column B', $headers['Sheet3'][2]);
+        self::assertEquals('Column C', $headers['Sheet3'][3]);
     }
 
     #[Test]
