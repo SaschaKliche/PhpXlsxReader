@@ -1,6 +1,6 @@
 # Release Notes
 
-## v1.1.0 - TODO
+## v1.1.0 - 2026-04-16
 
 - Added `XlsxReader::getWorksheetName()` to retrieve the name of a single worksheet
 - Added `XlsxReader::getHeaders()` to retrieve the headers after using `XlsxReader::readWithHeader()`.
