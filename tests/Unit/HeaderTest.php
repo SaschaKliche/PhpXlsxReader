@@ -14,10 +14,13 @@ class HeaderTest extends AbstractTestCase
     function it_treats_the_first_line_as_headers()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
 
-        $data = $reader->worksheets(['Sheet1'])->readWithHeader();
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet1'])
+            ->readWithHeader();
 
+        self::assertCount(1, $data); // only one worksheet
         self::assertArrayHasKey('Sheet1', $data);
 
         // first row containing headers is removed
@@ -39,9 +42,11 @@ class HeaderTest extends AbstractTestCase
     function it_treats_the_third_line_as_headers()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
 
-        $data = $reader->worksheets(['Sheet2'])->readWithHeader(3);
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet2'])
+            ->readWithHeader(3);
 
         self::assertArrayHasKey('Sheet2', $data);
 
@@ -64,9 +69,10 @@ class HeaderTest extends AbstractTestCase
     function it_treats_the_configured_line_as_headers()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
 
-        $data = $reader->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
 
         self::assertArrayHasKey('Sheet1', $data);
 
@@ -111,5 +117,68 @@ class HeaderTest extends AbstractTestCase
         $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
 
         $reader->readWithHeader();
+    }
+
+    #[Test]
+    function it_provides_access_to_the_headers_from_all_worksheets()
+    {
+        $reader = new XlsxReader();
+
+        $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->readWithHeader(['Sheet1' => 1, 'Sheet2' => 3]);
+
+        $headers = $reader->getHeaders();
+
+        self::assertEquals(
+            [
+                'Sheet1' => [1 => 'Column A', 'Column B', 'Column C'],
+                'Sheet2' => [1 => 'Column A', 'Column B', 'Column C'],
+                'Sheet3' => [1 => 'Column A', 'Column B', 'Column C'],
+            ],
+            $headers
+        );
+    }
+
+    #[Test]
+    function it_provides_access_to_the_header_from_a_single_worksheet()
+    {
+        $reader = new XlsxReader();
+
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet3'])
+            ->readWithHeader();
+
+        self::assertEquals(
+            [
+                'Sheet3' => [
+                    2 => ['Column B' => -42, 'Column C' => 0.001],
+                    ['Column A' => 20, 'Column C' => 1],
+                    ['Column A' => 30, 'Column B' => 9.837844, 'Column C' => 2],
+                    ['Column A' => 40, 'Column B' => -273.14],
+                    ['Column A' => 50, 'Column B' => 99.99, 'Column C' => 8],
+                ],
+            ],
+            $data
+        );
+
+        $headersSheet3 = $reader->getHeaders('Sheet3');
+        self::assertEquals([1 => 'Column A', 'Column B', 'Column C'], $headersSheet3);
+        // A naive array_keys(reset($data['Sheet3'])) wouldn't work to retrieve the columns.
+        // That would return a 0-based array containing 'Column B' and 'Column C'
+        // because the first data row does not contain all columns.
+    }
+
+    #[Test]
+    function non_existent_worksheet_throws_an_exception()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No header for worksheet "DoesNotExist"');
+
+        $reader = new XlsxReader();
+        $reader->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx');
+
+        $reader->getHeaders('DoesNotExist');
     }
 }

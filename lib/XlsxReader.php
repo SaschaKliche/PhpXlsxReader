@@ -33,6 +33,8 @@ class XlsxReader extends AbstractReader
     protected const string WORKBOOK_SHEET_ATTRIBUTE_RELATIONSHIP_NAMESPACE = 'r';
 
     protected string $filePath;
+    /** @var string[][] */
+    protected array $headers;
     protected bool $workbookOpened = false;
     protected bool $worksheetsLoaded = false;
     /** @var string[] */
@@ -53,7 +55,7 @@ class XlsxReader extends AbstractReader
      * Load the workbook.xml to determine the date format used and
      * retrieve the names and relationship IDs of the worksheets.
      */
-    public function open(string $filePath): void
+    public function open(string $filePath): self
     {
         $start = hrtime(true);
 
@@ -66,6 +68,7 @@ class XlsxReader extends AbstractReader
         }
 
         $this->metadata = null;
+        $this->headers = [];
         $this->worksheetNames = [];
 
         $readingSheets = false;
@@ -113,6 +116,8 @@ class XlsxReader extends AbstractReader
         $this->durationInSeconds = (hrtime(true) - $start) / 1e9;
         $this->memoryUsage = memory_get_usage();
         $this->memoryPeakUsage = memory_get_peak_usage();
+
+        return $this;
     }
 
     /**
@@ -198,7 +203,7 @@ class XlsxReader extends AbstractReader
                 continue;
             }
 
-            $currentHeaderRowIndex = $headerRowIndex[$worksheetName] ?? $headerRowIndex;
+            $currentHeaderRowIndex = $headerRowIndex[$worksheetName] ?? (is_array($headerRowIndex) ? 0 : $headerRowIndex);
             if (is_int($currentHeaderRowIndex) && $currentHeaderRowIndex < 0) {
                 throw new RuntimeException('Header row index must be >= 0');
             }
@@ -215,6 +220,7 @@ class XlsxReader extends AbstractReader
                 $header = $rows[$firstKey];
                 unset($rows[$firstKey]);
             }
+            $this->headers[$worksheetName] = $header;
 
             foreach ($rows as $rowIndex => &$row) {
 
@@ -235,6 +241,22 @@ class XlsxReader extends AbstractReader
         return $workbookData;
     }
 
+    /**
+     * @return string[]|string[][]
+     */
+    public function getHeaders(string $worksheetName = ''): array
+    {
+        if ($worksheetName === '') {
+            return $this->headers;
+        }
+
+        if (!isset($this->headers[$worksheetName])) {
+            throw new RuntimeException('No header for worksheet "' . $worksheetName. '"');
+        }
+
+        return $this->headers[$worksheetName];
+    }
+
     public function getMetadata(): Metadata
     {
         if ($this->metadata === null) {
@@ -246,6 +268,18 @@ class XlsxReader extends AbstractReader
         }
 
         return $this->metadata;
+    }
+
+    public function getWorksheetName(int $worksheetIndex): string
+    {
+        $worksheetNames = $this->getWorksheetNames();
+
+        $worksheetIndex--; // array index is 0-based
+        if (!isset($worksheetNames[$worksheetIndex])) {
+            throw new RuntimeException('No worksheet name for index ' . $worksheetIndex);
+        }
+
+        return $worksheetNames[$worksheetIndex];
     }
 
     /**

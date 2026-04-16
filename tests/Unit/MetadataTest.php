@@ -13,9 +13,10 @@ class MetadataTest extends AbstractTestCase
     function it_provides_access_to_metadata_without_loading_the_worksheets()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
 
-        $metadata = $reader->getMetadata();
+        $metadata = $reader
+            ->open(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->getMetadata();
 
         self::assertFalse($reader->worksheetsHaveBeenLoaded());
         self::assertNotEmpty($metadata);

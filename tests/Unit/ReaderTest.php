@@ -68,6 +68,7 @@ class ReaderTest extends AbstractTestCase
 
         self::assertFalse($reader->worksheetsHaveBeenLoaded());
         self::assertEquals(['Sheet1', 'Sheet2', 'Table'], $reader->getWorksheetNames());
+        self::assertEquals('Table', $reader->getWorksheetName(3));
     }
 
     #[Test]

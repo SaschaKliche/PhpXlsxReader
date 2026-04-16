@@ -137,6 +137,9 @@ class ArrayTest extends AbstractTestCase
         self::assertEquals(30, $data['Table'][7]['A7']);
         self::assertEquals(-147.192156, $data['Table'][7]['B7']);
         self::assertEquals(15.001, $data['Table'][7]['C7']);
+
+        // we didn't use readWithHeader() so we should not have any headers
+        self::assertEmpty($reader->getHeaders());
     }
 
     #[Test]

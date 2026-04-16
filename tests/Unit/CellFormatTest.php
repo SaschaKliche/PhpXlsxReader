@@ -77,7 +77,13 @@ class CellFormatTest extends AbstractTestCase
                 14 => static fn(DateTime $date) => $date->format('d.m.Y'),
                 // 9 => static fn(int $number) => number_format($number * 100, 2) . '%',
                 '0%' => static fn(int $number) => number_format($number * 100, 2) . '%',
-                '#,##0.00' => static fn(float $number) => number_format($number, 2),
+                '#,##0.00' => static function(float $number, string $rawValue, string $cellAddress, string $worksheetName) {
+                    // worksheet name and cell address are available in case formatting depends on the cell's location
+                    if ($worksheetName === 'Sheet1' && $cellAddress === 'A8') {
+                        return number_format($number, 2);
+                    }
+                    return $number;
+                },
             ])
             ->readAsArray();
 
