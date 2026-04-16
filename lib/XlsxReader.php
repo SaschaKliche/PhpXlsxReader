@@ -19,7 +19,7 @@ class XlsxReader extends AbstractReader
 {
     use BenchmarkHelperTrait, ConfigurationHelperTrait;
 
-    public const string VERSION = '1.1.0-develop';
+    public const string VERSION = '1.2.0-develop';
 
     protected const string PATH_WORKBOOK = '#xl/workbook.xml';
 
