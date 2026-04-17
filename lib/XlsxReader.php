@@ -197,6 +197,7 @@ class XlsxReader extends AbstractReader
     {
         $this->configuration->set(Configuration::USE_CELL_ADDRESS, false);
         $workbookData = $this->readAsArray();
+        $skipMissingCells = $this->configuration->get(Configuration::SKIP_MISSING_CELLS);
 
         foreach ($workbookData as $worksheetName => &$rows) {
             if ($rows === []) {
@@ -234,6 +235,14 @@ class XlsxReader extends AbstractReader
 
                     $row[$header[$column]] = $value;
                     unset($row[$column]);
+                }
+
+                if (!$skipMissingCells) {
+                    foreach ($header as $headerName) {
+                        if (!isset($row[$headerName])) {
+                            $row[$headerName] = null;
+                        }
+                    }
                 }
             }
         }

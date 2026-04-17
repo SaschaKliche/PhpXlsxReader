@@ -1,5 +1,10 @@
 # Release Notes
 
+## v1.2.0 - tbd
+
+- `readWithHeader()` in combination with `includeMissingCells()` will make sure that
+  a cell for each header exists in each row.
+
 ## v1.1.0 - 2026-04-16
 
 - Added `XlsxReader::getWorksheetName()` to retrieve the name of a single worksheet
