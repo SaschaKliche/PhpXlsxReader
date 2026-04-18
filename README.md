@@ -66,7 +66,7 @@ Available means that the row/cell does exist in the input file.
 Rows or cells that do not exist in the input file will not be returned at all.
 That means that the data returned can contain non-consecutive rows/cells.
 
-The libraries' main class is `XlsxReader`:
+The main class is `XlsxReader`:
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 

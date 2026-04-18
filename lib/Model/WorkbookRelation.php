@@ -2,7 +2,7 @@
 
 namespace SaschaKliche\PhpXlsxReader\Model;
 
-class WorkbookRelation extends AbstractRelationsModel
+class WorkbookRelation extends AbstractRelation
 {
     public const int TYPE_PERSON = 10;
     public const int TYPE_SHARED_STRINGS = 20;

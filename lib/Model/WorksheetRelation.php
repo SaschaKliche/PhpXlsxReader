@@ -2,7 +2,7 @@
 
 namespace SaschaKliche\PhpXlsxReader\Model;
 
-class WorksheetRelation extends AbstractRelationsModel
+class WorksheetRelation extends AbstractRelation
 {
     public const int TYPE_HYPERLINK = 10;
 
