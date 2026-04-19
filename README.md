@@ -66,7 +66,7 @@ Available means that the row/cell does exist in the input file.
 Rows or cells that do not exist in the input file will not be returned at all.
 That means that the data returned can contain non-consecutive rows/cells.
 
-The libraries' main class is `XlsxReader`:
+The main class is `XlsxReader`:
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
@@ -249,6 +249,22 @@ $data = $reader
 ```
 
 The default for `$headerRowIndex` is `0`, i.e. the first available row is used as header.
+
+`includeMissingCells()` can be used
+to make sure a cell is returned for each header for each row
+even if a cell for that header does not exist in a row in the input file.
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$reader = new XlsxReader();
+
+$data = $reader
+    ->open(<pathToInputFile>)
+    ->includeMissingCells()
+    ->readWithHeader();
+
+// $data[<worksheetname (string)>][<rowindex (int)>][<header (string)>]
+```
 
 #### `getHeaders()`: Retrieve headers
 
@@ -663,8 +679,11 @@ $data = $reader
 ```
 
 > [!CAUTION]
-> Columns that have been requested beyond the last existing column on a worksheet will not be returned!
-> E.g. a worksheet has columns 1 - 5, requesting column 6 will not return a column 6.
+> Columns that have been requested beyond the last existing column in a row will not be returned!
+> E.g. a row has columns 1 - 5, requesting column 6 will not return a column 6.  
+> Exception: If a header row is being used
+> ([`XlsxReader::readWithHeader()`](#readwithheader-reading-a-workbook-with-header-row-as-an-associative-array))
+> a cell for each header will be returned for each row on the worksheet.
 
 The default is an empty array (`[]`) meaning all existing columns are loaded.
 

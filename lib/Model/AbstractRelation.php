@@ -2,7 +2,7 @@
 
 namespace SaschaKliche\PhpXlsxReader\Model;
 
-abstract class AbstractRelationsModel
+abstract class AbstractRelation
 {
     public const int TYPE_UNKNOWN = 0;
 

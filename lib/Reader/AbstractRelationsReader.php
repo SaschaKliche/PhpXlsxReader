@@ -4,7 +4,7 @@ namespace SaschaKliche\PhpXlsxReader\Reader;
 
 use Exception;
 use RuntimeException;
-use SaschaKliche\PhpXlsxReader\Model\AbstractRelationsModel;
+use SaschaKliche\PhpXlsxReader\Model\AbstractRelation;
 use XMLReader;
 
 abstract class AbstractRelationsReader extends AbstractReader
@@ -69,7 +69,7 @@ abstract class AbstractRelationsReader extends AbstractReader
         }
     }
 
-    abstract protected function buildModel(string $id, string $target, int $type): AbstractRelationsModel;
+    abstract protected function buildModel(string $id, string $target, int $type): AbstractRelation;
 
     abstract protected function resolveType(string $type): int;
 }

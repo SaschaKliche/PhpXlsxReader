@@ -4,14 +4,14 @@ declare(strict_types=1);
 namespace SaschaKliche\PhpXlsxReader\Reader;
 
 use Exception;
-use SaschaKliche\PhpXlsxReader\Model\AbstractRelationsModel;
+use SaschaKliche\PhpXlsxReader\Model\AbstractRelation;
 use SaschaKliche\PhpXlsxReader\Model\WorksheetRelation;
 
 class WorksheetRelationsReader extends AbstractRelationsReader
 {
     public const string PATH_RELATIONSHIPS = '#xl/worksheets/_rels/';
 
-    public const int TYPE_UNKNOWN = AbstractRelationsModel::TYPE_UNKNOWN;
+    public const int TYPE_UNKNOWN = AbstractRelation::TYPE_UNKNOWN;
     public const int TYPE_HYPERLINK = WorksheetRelation::TYPE_HYPERLINK;
 
     protected const string SCHEMA_HYPERLINk = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink';

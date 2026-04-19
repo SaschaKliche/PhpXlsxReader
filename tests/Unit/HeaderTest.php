@@ -181,4 +181,32 @@ class HeaderTest extends AbstractTestCase
 
         $reader->getHeaders('DoesNotExist');
     }
+
+    #[Test]
+    function it_adds_missing_columns_with_header_name_if_requested()
+    {
+        $reader = new XlsxReader();
+
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet3'])
+            ->includeMissingCells()
+            ->readWithHeader();
+
+        self::assertEquals(
+            [
+                'Sheet3' => [
+                    2 => ['Column A' => null, 'Column B' => -42, 'Column C' => 0.001],
+                    ['Column A' => 20, 'Column B' => null, 'Column C' => 1],
+                    ['Column A' => 30, 'Column B' => 9.837844, 'Column C' => 2],
+                    ['Column A' => 40, 'Column B' => -273.14, 'Column C' => null],
+                    ['Column A' => 50, 'Column B' => 99.99, 'Column C' => 8],
+                ],
+            ],
+            $data
+        );
+
+        $headersSheet3 = $reader->getHeaders('Sheet3');
+        self::assertEquals([1 => 'Column A', 'Column B', 'Column C'], $headersSheet3);
+    }
 }

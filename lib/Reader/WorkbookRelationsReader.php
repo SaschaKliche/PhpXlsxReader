@@ -5,14 +5,14 @@ namespace SaschaKliche\PhpXlsxReader\Reader;
 
 use Exception;
 use RuntimeException;
-use SaschaKliche\PhpXlsxReader\Model\AbstractRelationsModel;
+use SaschaKliche\PhpXlsxReader\Model\AbstractRelation;
 use SaschaKliche\PhpXlsxReader\Model\WorkbookRelation;
 
 class WorkbookRelationsReader extends AbstractRelationsReader
 {
     public const string PATH_RELATIONSHIPS = '#xl/_rels/workbook.xml.rels';
 
-    public const int TYPE_UNKNOWN = AbstractRelationsModel::TYPE_UNKNOWN;
+    public const int TYPE_UNKNOWN = AbstractRelation::TYPE_UNKNOWN;
     public const int TYPE_PERSON = WorkbookRelation::TYPE_PERSON;
     public const int TYPE_SHARED_STRINGS = WorkbookRelation::TYPE_SHARED_STRINGS;
     public const int TYPE_STYLES = WorkbookRelation::TYPE_STYLES;
