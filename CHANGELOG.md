@@ -1,6 +1,10 @@
 # Release Notes
 
-## v1.2.0 - tbd
+## v1.3.0 - tbd
+
+
+
+## v1.2.0 - 2026-04-19
 
 - `readWithHeader()` in combination with `includeMissingCells()` will make sure that
   a cell for each header exists in each row.
