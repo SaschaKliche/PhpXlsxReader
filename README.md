@@ -98,7 +98,7 @@ readAsArray(): array
 readWithHeader(int|array $headerRowIndex = 0): array
 
 // retrieving information about the workbook
-getHeaders(string $worksheetName = ''): array
+getHeaders(int|string $worksheet = ''): array
 getMetadata(): Metadata
 getWorksheetName(): string
 getWorksheetNames(): array
@@ -272,7 +272,7 @@ To retrieve the headers after reading the file, use `getHeaders()`:
 
 Syntax:
 ```php
-XlsxReader::getHeaders(string $worksheetName = ''): array
+XlsxReader::getHeaders(int|string $worksheet = ''): array
 ```
 
 Example:
@@ -286,8 +286,12 @@ $reader->open(<pathToInputFile>)->readWithHeader();
 $headers = $reader->getHeaders();
 // $headers[<worksheetname (string)>][<columnindex (int)>] = [<header (string)>]
 
-// headers for a specific worksheet
+// headers for a specific worksheet identified by the worksheet name
 $headersSheet1 = $reader->getHeaders('Sheet1');
+// $headersSheet1[<columnindex (int)>] = [<header (string)>]
+
+// headers for a specific worksheet identified by the index number
+$headersSheet1 = $reader->getHeaders(3);
 // $headersSheet1[<columnindex (int)>] = [<header (string)>]
 ```
 
