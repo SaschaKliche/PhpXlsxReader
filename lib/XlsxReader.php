@@ -19,7 +19,7 @@ class XlsxReader extends AbstractReader
 {
     use BenchmarkHelperTrait, ConfigurationHelperTrait;
 
-    public const string VERSION = '1.2.0';
+    public const string VERSION = '1.3.0';
 
     protected const string PATH_WORKBOOK = '#xl/workbook.xml';
 
@@ -253,17 +253,24 @@ class XlsxReader extends AbstractReader
     /**
      * @return string[]|string[][]
      */
-    public function getHeaders(string $worksheetName = ''): array
+    public function getHeaders(int|string $worksheet = ''): array
     {
-        if ($worksheetName === '') {
+        if (is_int($worksheet)) {
+            $index = $worksheet;
+            $worksheet = array_keys($this->worksheetNames)[$worksheet - 1] ?? null;
+            if ($worksheet === null) {
+                throw new RuntimeException('No worksheet for index "' . $index. '"');
+            }
+        }
+        if ($worksheet === '') {
             return $this->headers;
         }
 
-        if (!isset($this->headers[$worksheetName])) {
-            throw new RuntimeException('No header for worksheet "' . $worksheetName. '"');
+        if (!isset($this->headers[$worksheet])) {
+            throw new RuntimeException('No header for worksheet "' . $worksheet. '"');
         }
 
-        return $this->headers[$worksheetName];
+        return $this->headers[$worksheet];
     }
 
     public function getMetadata(): Metadata

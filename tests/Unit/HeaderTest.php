@@ -141,7 +141,7 @@ class HeaderTest extends AbstractTestCase
     }
 
     #[Test]
-    function it_provides_access_to_the_header_from_a_single_worksheet()
+    function it_provides_access_to_the_header_from_a_single_worksheet_by_name()
     {
         $reader = new XlsxReader();
 
@@ -164,6 +164,36 @@ class HeaderTest extends AbstractTestCase
         );
 
         $headersSheet3 = $reader->getHeaders('Sheet3');
+        self::assertEquals([1 => 'Column A', 'Column B', 'Column C'], $headersSheet3);
+        // A naive array_keys(reset($data['Sheet3'])) wouldn't work to retrieve the columns.
+        // That would return a 0-based array containing 'Column B' and 'Column C'
+        // because the first data row does not contain all columns.
+    }
+
+    #[Test]
+    function it_provides_access_to_the_header_from_a_single_worksheet_by_index()
+    {
+        $reader = new XlsxReader();
+
+        $data = $reader
+            ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
+            ->worksheets(['Sheet3'])
+            ->readWithHeader();
+
+        self::assertEquals(
+            [
+                'Sheet3' => [
+                    2 => ['Column B' => -42, 'Column C' => 0.001],
+                    ['Column A' => 20, 'Column C' => 1],
+                    ['Column A' => 30, 'Column B' => 9.837844, 'Column C' => 2],
+                    ['Column A' => 40, 'Column B' => -273.14],
+                    ['Column A' => 50, 'Column B' => 99.99, 'Column C' => 8],
+                ],
+            ],
+            $data
+        );
+
+        $headersSheet3 = $reader->getHeaders(3);
         self::assertEquals([1 => 'Column A', 'Column B', 'Column C'], $headersSheet3);
         // A naive array_keys(reset($data['Sheet3'])) wouldn't work to retrieve the columns.
         // That would return a 0-based array containing 'Column B' and 'Column C'
