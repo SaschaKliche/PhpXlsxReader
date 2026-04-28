@@ -1,6 +1,10 @@
 # Release Notes
 
-## v1.3.0 - 2026-xx-xx
+## v1.4.0 - 2026-xx-xx
+
+
+
+## v1.3.0 - 2026-04-28
 
 - `XlsxReader::getHeaders()` accepts parameter `worksheet` as worksheet name (string) or index (int)
 
