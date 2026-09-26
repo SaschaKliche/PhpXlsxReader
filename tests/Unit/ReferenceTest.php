@@ -143,4 +143,106 @@ class ReferenceTest extends TestCase
 
         Reference::convertIndexToCellAddress(0, 42);
     }
+
+    static function provideParseAddressData(): Generator
+    {
+        yield 'Simple cell' => [
+            'C2',
+            [
+                Reference::PATH => null,
+                Reference::WORKBOOK => null,
+                Reference::SHEET => null,
+                Reference::COLUMN_CHAR => 'C',
+                Reference::COLUMN => 3,
+                Reference::ROW => 2,
+                Reference::COLUMN_TO_CHAR => null,
+                Reference::COLUMN_TO => null,
+                Reference::ROW_TO => null,
+            ],
+        ];
+
+        yield 'Sheet name' => [
+            'Sheet1!A1',
+            [
+                Reference::PATH => null,
+                Reference::WORKBOOK => null,
+                Reference::SHEET => 'Sheet1',
+                Reference::COLUMN_CHAR => 'A',
+                Reference::COLUMN => 1,
+                Reference::ROW => 1,
+                Reference::COLUMN_TO_CHAR => null,
+                Reference::COLUMN_TO => null,
+                Reference::ROW_TO => null,
+            ],
+        ];
+
+        yield 'Workbook' => [
+            '[SomeFile.xlsx]Sheet1!A1',
+            [
+                Reference::PATH => null,
+                Reference::WORKBOOK => 'SomeFile.xlsx',
+                Reference::SHEET => 'Sheet1',
+                Reference::COLUMN_CHAR => 'A',
+                Reference::COLUMN => 1,
+                Reference::ROW => 1,
+                Reference::COLUMN_TO_CHAR => null,
+                Reference::COLUMN_TO => null,
+                Reference::ROW_TO => null,
+            ],
+        ];
+
+        yield 'Workbook and path' => [
+            'c:\\files\\[SomeFile.xlsx]Sheet1!A1',
+            [
+                Reference::PATH => 'c:\\files\\',
+                Reference::WORKBOOK => 'SomeFile.xlsx',
+                Reference::SHEET => 'Sheet1',
+                Reference::COLUMN_CHAR => 'A',
+                Reference::COLUMN => 1,
+                Reference::ROW => 1,
+                Reference::COLUMN_TO_CHAR => null,
+                Reference::COLUMN_TO => null,
+                Reference::ROW_TO => null,
+            ],
+        ];
+
+        yield 'Worksheet with white space' => [
+            '\'Sales Data\'!B5',
+            [
+                Reference::PATH => null,
+                Reference::WORKBOOK => null,
+                Reference::SHEET => 'Sales Data',
+                Reference::COLUMN_CHAR => 'B',
+                Reference::COLUMN => 2,
+                Reference::ROW => 5,
+                Reference::COLUMN_TO_CHAR => null,
+                Reference::COLUMN_TO => null,
+                Reference::ROW_TO => null,
+            ],
+        ];
+
+        yield 'Range' => [
+            'Sheet2!A1:C10',
+            [
+                Reference::PATH => null,
+                Reference::WORKBOOK => null,
+                Reference::SHEET => 'Sheet2',
+                Reference::COLUMN_CHAR => 'A',
+                Reference::COLUMN => 1,
+                Reference::ROW => 1,
+                Reference::COLUMN_TO_CHAR => 'C',
+                Reference::COLUMN_TO => 3,
+                Reference::ROW_TO => 10,
+            ],
+        ];
+    }
+
+    #[Test]
+    #[DataProvider('provideParseAddressData')]
+    function it_parses_cell_addresses(string $cellAddress, array $expectedResult)
+    {
+        $result = Reference::parseCellAddress($cellAddress);
+
+        self::assertSame($expectedResult, $result);
+    }
 }
