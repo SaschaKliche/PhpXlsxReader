@@ -89,18 +89,28 @@ class Reference
             throw new Exception("'$cellAddress' is not recognized as an XLSX cell address");
         }
 
-        $columnIndex = 0;
-        foreach (str_split($matches[1]) as $letter) {
-            if (!isset(self::ADDRESS_TO_INDEX[$letter])) {
-                throw new Exception("'$cellAddress' is not recognized as an XLSX cell address");
-            }
-            $columnIndex = ($columnIndex * 26) + self::ADDRESS_TO_INDEX[$letter];
-        }
+        $columnIndex = self::columnToIndex($matches[1]);
 
         return [
             self::COLUMN => $columnIndex,
             self::ROW => (int) $matches[2],
         ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function columnToIndex(string $address): int
+    {
+        $columnIndex = 0;
+        foreach (str_split($address) as $letter) {
+            if (!isset(self::ADDRESS_TO_INDEX[$letter])) {
+                throw new Exception("'$address' is not recognized as an XLSX cell");
+            }
+            $columnIndex = ($columnIndex * 26) + self::ADDRESS_TO_INDEX[$letter];
+        }
+
+        return $columnIndex;
     }
 
     /**
