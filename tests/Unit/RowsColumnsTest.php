@@ -11,6 +11,46 @@ use SaschaKliche\PhpXlsxReader\XlsxReader;
 class RowsColumnsTest extends AbstractTestCase
 {
     #[Test]
+    function it_loads_a_specific_row()
+    {
+        $reader = new XlsxReader();
+        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
+
+        $data = $reader
+            ->worksheets(['Sheet2'])
+            ->row(1)
+            ->readAsArray();
+
+        self::assertEquals(
+            [
+                'Sheet2' => [
+                    1 => [
+                        'A1' => 'The second sheet',
+                        'B1' => 'is even more',
+                        'C1' => 'interesting!',
+                    ],
+                ],
+            ],
+            $data
+        );
+    }
+
+    #[Test]
+    function it_loads_a_specific_cell_with_column_character()
+    {
+        $reader = new XlsxReader();
+        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
+
+        $data = $reader
+            ->worksheets(['Sheet2'])
+            ->rows([1])
+            ->column('B')
+            ->readAsArray();
+
+        self::assertEquals(['Sheet2' => [1 => ['B1' => 'is even more']]], $data);
+    }
+
+    #[Test]
     function it_loads_requested_columns_only_from_each_worksheet_into_an_array()
     {
         $reader = new XlsxReader();
@@ -54,7 +94,7 @@ class RowsColumnsTest extends AbstractTestCase
         $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
 
         // these rows are only requested from worksheet "Sheet1", for other worksheets all rows will be returned
-        $data = $reader->includeMissingCells()->columns(['Sheet1' => [2, 3, 4, 5]])->readAsArray();
+        $data = $reader->includeMissingCells()->columns(['Sheet1' => ['B', 'C', 4, 5]])->readAsArray();
 
         self::assertArrayNotHasKey('A4', $data['Sheet1'][4]);
         // row 4 does not have columns 2 but it will be returned

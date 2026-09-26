@@ -72,6 +72,7 @@ class WorksheetReader extends AbstractReader
         $this->useDateSystem1900 = $this->configuration->get(Configuration::USE_DATE_SYSTEM_1900);
         $this->useCellAddressAsIndex = $this->configuration->get(Configuration::USE_CELL_ADDRESS);
         $this->initRowsOrColumnsToLoad(Configuration::COLUMNS_TO_LOAD, $this->columnsToLoad);
+        $this->transformColumnsToIndexes();
         $this->initRowsOrColumnsToLoad(Configuration::ROWS_TO_LOAD, $this->rowsToLoad);
     }
 
@@ -338,6 +339,22 @@ class WorksheetReader extends AbstractReader
                 'Invalid operator "' . $operator . '" in ' .
                     ($configurationVar === Configuration::ROWS_TO_LOAD ? 'ROWS_TO_LOAD' : 'COLUMNS_TO_LOAD')
             );
+        }
+    }
+
+    protected function transformColumnsToIndexes(): void
+    {
+        if ($this->columnsToLoad === []) {
+            return;
+        }
+
+        foreach (array_keys($this->columnsToLoad) as $column) {
+            if (is_int($column)) {
+                continue;
+            }
+
+            $this->columnsToLoad[Reference::columnToIndex($column)] = 0;
+            unset($this->columnsToLoad[$column]);
         }
     }
 
