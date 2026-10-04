@@ -111,9 +111,11 @@ class Reference
     {
         $columnIndex = 0;
         foreach (str_split($address) as $letter) {
+            $letter = strtoupper($letter);
             if (!isset(self::ADDRESS_TO_INDEX[$letter])) {
                 throw new Exception("'$address' is not recognized as an XLSX cell");
             }
+
             $columnIndex = ($columnIndex * 26) + self::ADDRESS_TO_INDEX[$letter];
         }
 

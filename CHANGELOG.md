@@ -3,6 +3,7 @@
 ## v1.4.0 - 2026-xx-xx
 
 - Fix: min/max configuration is broken in multiple ways
+- Support lower case columns in configuration `column()` and `columns()` helpers
 
 ## v1.3.0 - 2026-04-28
 
