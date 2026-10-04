@@ -1,8 +1,15 @@
 # Release Notes
 
+## v1.4.1 - 2026-10-04
+
+- Fix documentation
+- Add hyperlinks to overview of configuration helper methods
+- Add missing entry to v1.4.0 changelog
+
 ## v1.4.0 - 2026-10-04
 
 - Fix: min/max configuration is broken in multiple ways
+- Add cell() and row() configuration helpers
 - Support lower case columns in configuration `column()` and `columns()` helpers
 
 ## v1.3.0 - 2026-04-28
