@@ -7,7 +7,14 @@ use Exception;
 class Reference
 {
     public const string COLUMN = 'columnIndex';
+    public const string COLUMN_CHAR = 'columnCharacter';
     public const string ROW = 'rowIndex';
+    public const string COLUMN_TO = 'columnToIndex';
+    public const string COLUMN_TO_CHAR = 'columnToCharacter';
+    public const string ROW_TO = 'rowToIndex';
+    public const string SHEET = 'sheetName';
+    public const string PATH = 'path';
+    public const string WORKBOOK = 'workbook';
 
     protected const array ADDRESS_TO_INDEX = [
         'A' => 1, 'B' => 2, 'C' => 3, 'D' => 4, 'E' => 5, 'F' => 6, 'G' => 7,
@@ -89,18 +96,30 @@ class Reference
             throw new Exception("'$cellAddress' is not recognized as an XLSX cell address");
         }
 
-        $columnIndex = 0;
-        foreach (str_split($matches[1]) as $letter) {
-            if (!isset(self::ADDRESS_TO_INDEX[$letter])) {
-                throw new Exception("'$cellAddress' is not recognized as an XLSX cell address");
-            }
-            $columnIndex = ($columnIndex * 26) + self::ADDRESS_TO_INDEX[$letter];
-        }
+        $columnIndex = self::columnToIndex($matches[1]);
 
         return [
             self::COLUMN => $columnIndex,
             self::ROW => (int) $matches[2],
         ];
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function columnToIndex(string $address): int
+    {
+        $columnIndex = 0;
+        foreach (str_split($address) as $letter) {
+            $letter = strtoupper($letter);
+            if (!isset(self::ADDRESS_TO_INDEX[$letter])) {
+                throw new Exception("'$address' is not recognized as an XLSX cell");
+            }
+
+            $columnIndex = ($columnIndex * 26) + self::ADDRESS_TO_INDEX[$letter];
+        }
+
+        return $columnIndex;
     }
 
     /**
@@ -147,5 +166,27 @@ class Reference
         static::$indexToAddress[$columnIndex] = $columnReference;
 
         return $columnReference;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function parseCellAddress(string $cellAddress): array
+    {
+        if (preg_match('/^(?:(?:(?<path>.+)?\[(?<workbook>[\w .]+)])?(\'?(?<sheet>[\w ]+)\'?)!)?\$?(?<column>[A-Z]+)\$?(?<row>\d+)(?::\$?(?<columnTo>[A-Z]+)\$?(?<rowTo>\d+))?$/', $cellAddress, $matches, PREG_UNMATCHED_AS_NULL) != 1) {
+            throw new Exception("'$cellAddress' is not recognized as an XLSX cell address");
+        }
+
+        return [
+            self::PATH => $matches['path'],
+            self::WORKBOOK => $matches['workbook'],
+            self::SHEET => $matches['sheet'],
+            self::COLUMN_CHAR => $matches['column'],
+            self::COLUMN => self::columnToIndex($matches['column']),
+            self::ROW => (int) $matches['row'],
+            self::COLUMN_TO_CHAR => $matches['columnTo'],
+            self::COLUMN_TO => ($matches['columnTo'] !== null ? self::columnToIndex($matches['columnTo']) : null),
+            self::ROW_TO => ($matches['rowTo'] !== null ? (int) $matches['rowTo'] : null),
+        ];
     }
 }

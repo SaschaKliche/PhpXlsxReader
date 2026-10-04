@@ -66,12 +66,30 @@ trait ConfigurationHelperTrait
         return $this;
     }
 
+    public function column(int|string $column): self
+    {
+        $this->configuration->set(Configuration::COLUMNS_TO_LOAD, [$column]);
+        return $this;
+    }
+
+    /**
+     * @param int[]|string[]|mixed[] $columns
+     */
     public function columns(array $columns): self
     {
         $this->configuration->set(Configuration::COLUMNS_TO_LOAD, $columns);
         return $this;
     }
 
+    public function row(int $row): self
+    {
+        $this->configuration->set(Configuration::ROWS_TO_LOAD, [$row]);
+        return $this;
+    }
+
+    /**
+     * @param int[]|mixed[] $rows
+     */
     public function rows(array $rows): self
     {
         $this->configuration->set(Configuration::ROWS_TO_LOAD, $rows);

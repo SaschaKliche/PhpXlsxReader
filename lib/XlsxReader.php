@@ -19,7 +19,7 @@ class XlsxReader extends AbstractReader
 {
     use BenchmarkHelperTrait, ConfigurationHelperTrait;
 
-    public const string VERSION = '1.3.0';
+    public const string VERSION = '1.4.0';
 
     protected const string PATH_WORKBOOK = '#xl/workbook.xml';
 
@@ -156,7 +156,8 @@ class XlsxReader extends AbstractReader
                 $worksheetName,
                 $this->sharedStrings,
                 $this->styles,
-                $this->configuration
+                $this->configuration,
+                $this->worksheetNames
             );
 
             foreach ($worksheet->load() as $row) {

@@ -77,9 +77,9 @@ foreach ($reader->read() as $worksheetName => $rows) {
     print 'Worksheet ' . $worksheetName . PHP_EOL;
     foreach ($rows as $rowIndex => $row) {
         print "\t" . 'Row ' . $rowIndex . PHP_EOL;
-        foreach ($row as $columnAddress => $column) {
-            // $column can be int/float/string/DateTime unless a custom formatter is used
-            print "\t\t" . 'Cell ' . $columnAddress . ': ' . ($column instanceof DateTime ? $column->format('Y-m-d H:i:s') : $column) . "\n";
+        foreach ($row as $cellAddress => $cell) {
+            // $cell can be int/float/string/DateTime unless a custom formatter is used
+            print "\t\t" . 'Cell ' . $cellAddress . ': ' . ($cell instanceof \DateTime ? $cell->format('Y-m-d H:i:s') : $cell) . "\n";
         }
     }
 }
@@ -385,6 +385,7 @@ $reader = new XlsxReader(<pathToInputFile>, $configuration);
 
 ... or by using the following fluent helper methods on an `XlsxReader` instance:
 
+- `column()`
 - `columns()` (default: `[]`)
 - `customFormats()` (default: `[]`)
 - `includeMissingCells()`
@@ -392,12 +393,15 @@ $reader = new XlsxReader(<pathToInputFile>, $configuration);
 - `includeMissingRows()`
 - `skipMissingRows()` (default)
 - `returnCellObjects(bool $readFormulas = false, bool $readHyperlinks = false)`
+- `row()`
 - `rows()` (default: `[]`)
 - `useCellAddress()` (default)
 - `useColumnIndex()`
 - `useDateSystem1900()` (default)
 - `useDateSystem1904()`
 - `worksheets()` (default: `[]`)
+
+`column()` and `columns()` accept columns as index values (1, 2, ...) or characters ('A', 'B', ...).
 
 ### `customFormats()`: Apply custom formatting
 
@@ -620,11 +624,11 @@ $data = $reader
 
 The equivalent of setting the option `Configuration::COLUMNS_TO_LOAD`.
 
-If only specific rows from a worksheet are needed,
-those rows can be requested using `columns()` by
-providing an array of row index numbers.
+If only specific columns from a worksheet are needed,
+those columns can be requested using `columns()` by
+providing an array of column index numbers (e.g. 1, 2, 4) or characters (e.g. 'A', 'B', 'D').
 
-Columns can either be requested "globally" for each existing worksheet ...
+Columns can either be requested for each existing worksheet ...
 
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
@@ -646,7 +650,7 @@ $reader = new XlsxReader();
 
 $data = $reader
     ->open(<pathToInputFile>)
-    ->columns(['Sheet1' => [2, 3, 4, 5]])
+    ->columns(['Sheet1' => [2, 3, 4, 5], 'Sheet2' => [8, 15]])
     ->readAsArray();
 ```
 
@@ -699,7 +703,7 @@ If only specific rows from a worksheet are needed,
 those rows can be requested using `rows()` by
 providing an array of row index numbers.
 
-Rows can either be requested "globally" for each existing worksheet ...
+Rows can either be requested for each existing worksheet ...
 
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;

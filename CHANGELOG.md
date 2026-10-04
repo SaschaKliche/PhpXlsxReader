@@ -1,5 +1,10 @@
 # Release Notes
 
+## v1.4.0 - 2026-10-04
+
+- Fix: min/max configuration is broken in multiple ways
+- Support lower case columns in configuration `column()` and `columns()` helpers
+
 ## v1.3.0 - 2026-04-28
 
 - `XlsxReader::getHeaders()` accepts parameter `worksheet` as worksheet name (string) or index (int)
