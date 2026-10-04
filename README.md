@@ -385,21 +385,21 @@ $reader = new XlsxReader(<pathToInputFile>, $configuration);
 
 ... or by using the following fluent helper methods on an `XlsxReader` instance:
 
-- `column()`
-- `columns()` (default: `[]`)
-- `customFormats()` (default: `[]`)
-- `includeMissingCells()`
-- `skipMissingCells()` (default)
-- `includeMissingRows()`
-- `skipMissingRows()` (default)
-- `returnCellObjects(bool $readFormulas = false, bool $readHyperlinks = false)`
-- `row()`
-- `rows()` (default: `[]`)
-- `useCellAddress()` (default)
-- `useColumnIndex()`
-- `useDateSystem1900()` (default)
-- `useDateSystem1904()`
-- `worksheets()` (default: `[]`)
+- [`column(int|string $column)`](#column-selecting-a-single-column-to-load-from-the-worksheets)
+- [`columns(array $columns)`](#columns-selecting-the-columns-to-load-from-the-worksheets) (default: `[]`)
+- [`customFormats(array $formats)`](#customformats-apply-custom-formatting) (default: `[]`)
+- [`includeMissingCells()`](#includemissingcells-include-missing-cells)
+- [`skipMissingCells()`](#skipmissingcells-ignore-missing-cells) (default)
+- [`includeMissingRows()`](#includemissingrows-include-missing-rows)
+- [`skipMissingRows()`](#skipmissingrows-ignore-missing-rows) (default)
+- [`returnCellObjects(bool $readFormulas = false, bool $readHyperlinks = false)`](#returncellobjects-return-cell-object-instances-instead-of-cell-values)
+- [`row(int $row)`](#row-selecting-a-single-row-to-load-from-the-worksheets)
+- [`rows(array $rows)`](#rows-selecting-the-rows-to-load-from-the-worksheets) (default: `[]`)
+- [`useCellAddress()`](#usecelladdress-indexing-cells-by-cell-address) (default)
+- [`useColumnIndex()`](#usecolumnindex-indexing-cells-by-column-index-number)
+- [`useDateSystem1900()`](#usedatesystem1900-use-1900-date-system) (default)
+- [`useDateSystem1904()`](#usedatesystem1904-use-1904-date-system)
+- [`worksheets(array $worksheetNames)`](#worksheets-selecting-the-worksheets-to-load-from-a-workbook) (default: `[]`)
 
 `column()` and `columns()` accept columns as index values (1, 2, ...) or characters ('A', 'B', ...).
 
@@ -620,13 +620,50 @@ $data = $reader
     ->readAsArray();
 ```
 
+### `column()`: Selecting a single column to load from the worksheets
+
+```php
+// $column can be either the column index (1, 2, ...) or the character  ('A', 'B', ...)
+column(int|string $column): XlsxReader
+```
+
+The equivalent of setting the option `Configuration::COLUMNS_TO_LOAD` to a single value.
+
+Loads data for the given column from all available worksheets unless restricted
+by using [`worksheets()`](#worksheets-selecting-the-worksheets-to-load-from-a-workbook).
+
+Using a column index:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$data = (new XlsxReader())
+    ->open(<pathToInputFile>)
+    ->column(3)
+    ->readAsArray();
+```
+
+Using a column character:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$data = (new XlsxReader())
+    ->open(<pathToInputFile>)
+    ->column('C')
+    ->readAsArray();
+```
+
 ### `columns()`: Selecting the columns to load from the worksheets
+
+```php
+// $columns array values can be either the column index (1, 2, ...) or the character  ('A', 'B', ...)
+columns(array $columns): XlsxReader
+```
 
 The equivalent of setting the option `Configuration::COLUMNS_TO_LOAD`.
 
-If only specific columns from a worksheet are needed,
-those columns can be requested using `columns()` by
-providing an array of column index numbers (e.g. 1, 2, 4) or characters (e.g. 'A', 'B', 'D').
+Loads data for the given columns from all available worksheets unless restricted
+by using [`worksheets()`](#worksheets-selecting-the-worksheets-to-load-from-a-workbook) or
+specifying array entries per worksheet.
 
 Columns can either be requested for each existing worksheet ...
 
@@ -694,6 +731,49 @@ $data = $reader
 > a cell for each header will be returned for each row on the worksheet.
 
 The default is an empty array (`[]`) meaning all existing columns are loaded.
+
+### `row()`: Selecting a single row to load from the worksheets
+
+```php
+row(int $row, string|array $worksheets = []): XlsxReader
+```
+
+The equivalent of setting the option `Configuration::ROWS_TO_LOAD` to a single value.
+
+Loads data for the given row from all available worksheets unless restricted by
+specifying the optional parameter `$worksheets`
+or by using [`worksheets()`](#worksheets-selecting-the-worksheets-to-load-from-a-workbook).
+If both the parameter `$worksheets` and the helper `worksheets()` are used, the last caller wins.
+
+Loading from all worksheets:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$data = (new XlsxReader())
+    ->open(<pathToInputFile>)
+    ->row(4)
+    ->readAsArray();
+```
+
+Loading from a single worksheet:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$data = (new XlsxReader())
+    ->open(<pathToInputFile>)
+    ->row(4, 'Sheet3')
+    ->readAsArray();
+```
+
+Loading from specific worksheets:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$data = (new XlsxReader())
+    ->open(<pathToInputFile>)
+    ->row(4, ['Sheet1', 'Sheet3'])
+    ->readAsArray();
+```
 
 ### `rows()`: Selecting the rows to load from the worksheets
 
