@@ -15,6 +15,8 @@ class WorksheetReader extends AbstractReader
 {
     use CellValueHelper;
 
+    public const string EXCEPTION_MIN_MAX = Configuration::MAX . ' must be >= ' . Configuration::MIN;
+
     protected const string PATH_SHEET_PREFIX = '#xl/';
 
     protected const string CELL_ELEMENT_NAME_VALUE = 'v'; // 18.3.1.96 v (Cell Value)
@@ -55,13 +57,17 @@ class WorksheetReader extends AbstractReader
     protected array $rowsToLoad = [];
     protected array $hyperlinks = [];
 
+    /**
+     * @throws Exception
+     */
     public function __construct(
         protected string $filePath,
         protected string $worksheetPath,
         protected string $worksheetName,
         protected SharedStringsReader $sharedStrings,
         protected Styles $styles,
-        protected Configuration $configuration
+        protected Configuration $configuration,
+        protected array $worksheetNames,
     ) {
         $this->customFormats = $this->configuration->get(Configuration::CUSTOM_FORMATS);
         $this->skipMissingCells = $this->configuration->get(Configuration::SKIP_MISSING_CELLS);
@@ -182,14 +188,14 @@ class WorksheetReader extends AbstractReader
             if (!$this->skipMissingRows) {
                 // check for missing rows, add them if requested
                 for ($i = $previousRowIndex + 1; $i < $rowIndex; $i++) {
-                    if ($this->shouldLoadRowOrColumn($this->rowsToLoad, $i)) {
+                    if (self::shouldLoadRowOrColumn($this->rowsToLoad, $i)) {
                         yield $i => [];
                     }
                 }
             }
             $previousRowIndex = $rowIndex;
 
-            if ($this->shouldLoadRowOrColumn($this->rowsToLoad, $rowIndex)) {
+            if (self::shouldLoadRowOrColumn($this->rowsToLoad, $rowIndex)) {
                 yield $rowIndex => $this->handleRow($reader, $rowIndex);
             }
         }
@@ -223,7 +229,7 @@ class WorksheetReader extends AbstractReader
                 if (!$this->skipMissingCells) {
                     // check for missing cells, add them if requested
                     for ($i = $previousCellIndex + 1; $i < $cellIndex; $i++) {
-                        if (!$this->shouldLoadRowOrColumn($this->columnsToLoad, $i)) {
+                        if (!self::shouldLoadRowOrColumn($this->columnsToLoad, $i)) {
                             continue;
                         }
 
@@ -237,7 +243,7 @@ class WorksheetReader extends AbstractReader
                 }
             }
 
-            if (!$this->shouldLoadRowOrColumn($this->columnsToLoad, $cellIndex)) {
+            if (!self::shouldLoadRowOrColumn($this->columnsToLoad, $cellIndex)) {
                 continue;
             }
 
@@ -306,12 +312,25 @@ class WorksheetReader extends AbstractReader
 
     protected function initRowsOrColumnsToLoad(int $configurationVar, array &$configuration): void
     {
-        $toLoad = $this->configuration->get($configurationVar);
-        if (!array_is_list($toLoad)) {
-            $toLoad = $toLoad[$this->worksheetName] ?? [];
+        $toLoad = $this->configuration->get($configurationVar, []);
+        if ($toLoad === []) {
+            return;
+        }
+
+        if (!array_is_list($toLoad) && isset($toLoad[$this->worksheetName])) {
+            // fetch worksheet configuration
+            $toLoad = $toLoad[$this->worksheetName];
         }
 
         if (array_is_list($toLoad)) {
+            // simple list of numbers or column characters
+            if ($configurationVar === Configuration::ROWS_TO_LOAD) {
+                foreach ($toLoad as $row) {
+                    if (!is_int($row)) {
+                        throw new RuntimeException('Invalid row number "' . $row . '" in ROWS_TO_LOAD');
+                    }
+                }
+            }
             $configuration = array_flip($toLoad);
             return;
         }
@@ -335,13 +354,32 @@ class WorksheetReader extends AbstractReader
                 continue;
             }
 
+            if (isset($this->worksheetNames[$operator])) {
+                return;
+            }
+
             throw new RuntimeException(
                 'Invalid operator "' . $operator . '" in ' .
                     ($configurationVar === Configuration::ROWS_TO_LOAD ? 'ROWS_TO_LOAD' : 'COLUMNS_TO_LOAD')
             );
         }
+
+        if (($configuration[Configuration::MIN] ?? 1) < 1) {
+            throw new RuntimeException(Configuration::MIN . ' must be greater than 1');
+        }
+
+        if (($configuration[Configuration::MAX] ?? 1) < 1) {
+            throw new RuntimeException(Configuration::MAX . ' must be greater than 1');
+        }
+
+        if (($configuration[Configuration::MAX] ?? PHP_INT_MAX) < ($configuration[Configuration::MIN] ?? 1)) {
+            throw new RuntimeException(self::EXCEPTION_MIN_MAX);
+        }
     }
 
+    /**
+     * @throws Exception
+     */
     protected function transformColumnsToIndexes(): void
     {
         if ($this->columnsToLoad === []) {
@@ -358,16 +396,8 @@ class WorksheetReader extends AbstractReader
         }
     }
 
-    protected function shouldLoadRowOrColumn(array $configuration, int $index): bool
+    public static function shouldLoadRowOrColumn(array $configuration, int $index): bool
     {
-        if (isset($configuration[Configuration::MIN])) {
-            return ($configuration[Configuration::MIN] === 1 || $index >= $configuration[Configuration::MIN]);
-        }
-
-        if (isset($configuration[Configuration::MAX])) {
-            return ($configuration[Configuration::MAX] === 0 || $index <= $configuration[Configuration::MAX]);
-        }
-
         if ($configuration === []) {
             return true;
         }
@@ -376,6 +406,18 @@ class WorksheetReader extends AbstractReader
             return true;
         }
 
-        return false;
+        $shouldLoad = false;
+        if (isset($configuration[Configuration::MIN])) {
+            $shouldLoad = ($index >= $configuration[Configuration::MIN]);
+            if ($shouldLoad === false) {
+                return false;
+            }
+        }
+
+        if (isset($configuration[Configuration::MAX])) {
+            return ($index <= $configuration[Configuration::MAX]);
+        }
+
+        return $shouldLoad;
     }
 }

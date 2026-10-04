@@ -156,7 +156,8 @@ class XlsxReader extends AbstractReader
                 $worksheetName,
                 $this->sharedStrings,
                 $this->styles,
-                $this->configuration
+                $this->configuration,
+                $this->worksheetNames
             );
 
             foreach ($worksheet->load() as $row) {

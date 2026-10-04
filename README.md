@@ -624,11 +624,11 @@ $data = $reader
 
 The equivalent of setting the option `Configuration::COLUMNS_TO_LOAD`.
 
-If only specific rows from a worksheet are needed,
-those rows can be requested using `columns()` by
-providing an array of row index numbers.
+If only specific columns from a worksheet are needed,
+those columns can be requested using `columns()` by
+providing an array of column index numbers (e.g. 1, 2, 4) or characters (e.g. 'A', 'B', 'D').
 
-Columns can either be requested "globally" for each existing worksheet ...
+Columns can either be requested for each existing worksheet ...
 
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
@@ -650,7 +650,7 @@ $reader = new XlsxReader();
 
 $data = $reader
     ->open(<pathToInputFile>)
-    ->columns(['Sheet1' => [2, 3, 4, 5]])
+    ->columns(['Sheet1' => [2, 3, 4, 5], 'Sheet2' => [8, 15]])
     ->readAsArray();
 ```
 
@@ -703,7 +703,7 @@ If only specific rows from a worksheet are needed,
 those rows can be requested using `rows()` by
 providing an array of row index numbers.
 
-Rows can either be requested "globally" for each existing worksheet ...
+Rows can either be requested for each existing worksheet ...
 
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
