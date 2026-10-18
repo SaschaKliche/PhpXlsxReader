@@ -1,7 +1,8 @@
 # Release Notes
 
-## v1.4.2
+## Unreleased
 
+- `Configuration::get()` returns the current configuration as an array if called without parameters
 - Added `worksheet()` configuration helper method to load a single worksheet
 - Added static `XlsxReader::from()` to open a file without having to instantiate the class first
 

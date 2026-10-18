@@ -19,7 +19,7 @@ class XlsxReader extends AbstractReader
 {
     use BenchmarkHelperTrait, ConfigurationHelperTrait;
 
-    public const string VERSION = '1.4.1-develop';
+    public const string VERSION = '1.4.2-develop';
 
     protected const string PATH_WORKBOOK = '#xl/workbook.xml';
 
@@ -321,9 +321,9 @@ class XlsxReader extends AbstractReader
      * For testing purposes only.
      * Subject to removal without further notice.
      */
-    public function dateSystem1900(): bool
+    public function getConfiguration(): Configuration
     {
-        return $this->configuration->get(Configuration::USE_DATE_SYSTEM_1900);
+        return $this->configuration;
     }
 
     /**

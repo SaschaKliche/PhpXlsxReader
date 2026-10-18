@@ -18,11 +18,11 @@ class Configuration
 
     protected array $configuration = [
         self::CUSTOM_FORMATS => [],
+        self::SKIP_MISSING_CELLS => true,
+        self::SKIP_MISSING_ROWS => true,
         self::RETURN_CELL_OBJECTS => false,
         self::READ_FORMULAS => false,
         self::READ_HYPERLINKS => false,
-        self::SKIP_MISSING_CELLS => true,
-        self::SKIP_MISSING_ROWS => true,
         self::USE_CELL_ADDRESS => true,
         self::USE_DATE_SYSTEM_1900 => true,
         self::COLUMNS_TO_LOAD => [],
@@ -44,8 +44,12 @@ class Configuration
         return $configuration;
     }
 
-    public function get(int|string $name, mixed $default = null): mixed
+    public function get(int|string $name = '', mixed $default = null): mixed
     {
+        if ($name === '') {
+            return $this->configuration;
+        }
+
         return $this->configuration[$name] ?? $default;
     }
 

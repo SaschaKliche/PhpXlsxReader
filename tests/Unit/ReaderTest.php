@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace SaschaKliche\PhpXlsxReader\Tests\Unit;
 
 use PHPUnit\Framework\Attributes\Test;
+use SaschaKliche\PhpXlsxReader\Configuration;
 use SaschaKliche\PhpXlsxReader\Tests\AbstractTestCase;
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
@@ -100,10 +101,10 @@ class ReaderTest extends AbstractTestCase
 
         $reader->open(self::INPUT_FILES_DIR . 'Dates1900.xlsx');
         self::assertFalse($reader->worksheetsHaveBeenLoaded());
-        self::assertTrue($reader->dateSystem1900());
+        self::assertTrue($reader->getConfiguration()->get(Configuration::USE_DATE_SYSTEM_1900));
 
         $reader->open(self::INPUT_FILES_DIR . 'Dates1904.xlsx');
         self::assertFalse($reader->worksheetsHaveBeenLoaded());
-        self::assertFalse($reader->dateSystem1900());
+        self::assertFalse($reader->getConfiguration()->get(Configuration::USE_DATE_SYSTEM_1900));
     }
 }
