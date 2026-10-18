@@ -91,6 +91,8 @@ The following methods are provided by `XlsxReader`:
 ```php
 // opening a file
 open(string $filePath): XlsxReader
+// or as a static method
+XlsxReader::from(string $filePath, array $configuration = []): XlsxReader
 
 // reading the actual data
 read(): Generator

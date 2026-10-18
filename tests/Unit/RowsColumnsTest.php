@@ -13,10 +13,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_a_specific_row()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->worksheets(['Sheet2'])
             ->row(1)
             ->readAsArray();
@@ -38,10 +35,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_a_specific_cell_with_column_character()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->worksheets(['Sheet2'])
             ->rows([1])
             ->column('B')
@@ -53,10 +47,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_requested_columns_only_from_each_worksheet_into_an_array()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             // these columns are requested from each worksheet
             // columns can be requested using their column index or character(s)
             ->columns([2, 'C', 4, 'E'])
@@ -103,10 +94,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_requested_columns_only_from_a_specific_worksheet_into_an_array_including_missing_columns()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->includeMissingCells()
             // these rows are only requested from worksheet "Sheet1", for other worksheets all rows will be returned
             ->columns(['Sheet1' => ['B', 'c', 4, 5]])
@@ -152,10 +140,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_requested_rows_only_from_each_worksheet_into_an_array()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             // these rows are requested from all worksheets
             ->rows([2, 3, 4, 5])
             ->readAsArray();
@@ -179,10 +164,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_requested_rows_only_from_a_specific_worksheet_into_an_array_including_missing_rows()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->includeMissingRows()
             // these rows are only requested from worksheet "Sheet1", for other worksheets all rows will be returned
             ->rows(['Sheet1' => [2, 3, 4, 5]])
@@ -208,10 +190,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_requested_rows_individually_by_worksheet_into_an_array()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             // each worksheet has its own row selection
             // we do not request missing rows so rows that don't exist on a worksheet will not be returned
             ->rows(['Sheet1' => [4, 5], 'Sheet2' => [2], 'Table' => [1, 3]])
@@ -233,10 +212,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_rows_with_min_max_index_only_from_a_specific_worksheet_into_an_array()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->includeMissingRows()
             // these rows are only requested from worksheet "Sheet1", for other worksheets all rows will be returned
             ->rows(['Sheet1' => [Configuration::MIN => 2, Configuration::MAX => 5]])
@@ -262,10 +238,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_rows_with_min_index_only_from_a_specific_worksheet_into_an_array()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             // these rows are only requested from worksheet "Sheet1"
             // for other worksheets all rows will be returned
             ->rows(['Sheet1' => [Configuration::MIN => 3]])
@@ -291,10 +264,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_rows_with_min_index_only_from_a_all_worksheets_into_an_array()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             // these rows are requested from all worksheets
             ->rows([Configuration::MIN => 3])
             ->readAsArray();
@@ -318,10 +288,7 @@ class RowsColumnsTest extends AbstractTestCase
     #[Test]
     function it_loads_rows_with_max_index_only_from_a_all_worksheets_into_an_array()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             // these rows are requested from all worksheets
             ->rows([Configuration::MAX => 3])
             ->readAsArray();

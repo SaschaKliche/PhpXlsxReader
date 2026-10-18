@@ -51,6 +51,11 @@ class XlsxReader extends AbstractReader
         $this->configuration = Configuration::from($configuration);
     }
 
+    public static function from(string $filePath, array $configuration = []): self
+    {
+        return (new self($configuration))->open($filePath);
+    }
+
     /*
      * Load the workbook.xml to determine the date format used and
      * retrieve the names and relationship IDs of the worksheets.

@@ -1,5 +1,9 @@
 # Release Notes
 
+## v1.4.2
+
+- Added static `XlsxReader::from()` to open a file without having to instantiate the class first
+
 ## v1.4.1 - 2026-10-04
 
 - Fix documentation

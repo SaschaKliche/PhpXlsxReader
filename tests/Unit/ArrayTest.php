@@ -13,8 +13,7 @@ class ArrayTest extends AbstractTestCase
     #[Test]
     function it_reads_as_array_with_column_addresses()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
+        $reader = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx');
 
         /*
          * The workbook contains three worksheets, so $data contains three entries:
@@ -181,10 +180,7 @@ class ArrayTest extends AbstractTestCase
     #[Test]
     function it_reads_as_array_with_column_addresses_and_includes_missing_cells_and_rows()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->includeMissingCells()
             ->includeMissingRows()
             ->readAsArray();
@@ -233,10 +229,7 @@ class ArrayTest extends AbstractTestCase
     #[Test]
     function it_reads_as_array_with_column_index()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->useColumnIndex()
             ->readAsArray();
 
@@ -282,15 +275,11 @@ class ArrayTest extends AbstractTestCase
     #[Test]
     function it_reads_as_array_with_column_index_and_includes_missing_cells_and_rows()
     {
-        $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
-
-        $data = $reader
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->includeMissingCells()
             ->includeMissingRows()
             ->useColumnIndex()
             ->readAsArray();
-
 
         // the workbook contains three worksheets: 'Sheet1', 'Sheet2', 'Table'
         self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
