@@ -42,9 +42,10 @@ class CellFormatTest extends AbstractTestCase
         ];
 
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'FormatStrings.xlsx');
+        $reader->open(self::INPUT_FILES_DIR . 'FormatStrings.xlsx')
+            ->returnCellObjects();
 
-        foreach ($reader->returnCellObjects()->read() as $worksheetName => $rows) {
+        foreach ($reader->read() as $worksheetName => $rows) {
             self::assertIsString($worksheetName);
 
             foreach ($rows as $rowIndex => $row) {
@@ -58,7 +59,7 @@ class CellFormatTest extends AbstractTestCase
                         continue;
                     }
 
-                    self::assertEquals($expected[$worksheetName][$cellAddress], $cell->getCellFormatString());
+                    self::assertSame($expected[$worksheetName][$cellAddress], $cell->getCellFormatString());
                 }
             }
         }
@@ -91,16 +92,15 @@ class CellFormatTest extends AbstractTestCase
 
         // formatted date as string
         self::assertIsString($data['Sheet1'][3]['A3']);
-        self::assertEquals('01.04.2026', $data['Sheet1'][3]['A3']);
+        self::assertSame('01.04.2026', $data['Sheet1'][3]['A3']);
 
         // date time still a DateTime instance
-        self::assertInstanceOf(DateTime::class, $data['Sheet1'][3]['B3']);
         self::assertEquals(new DateTime('18.03.1974 19:14:23'), $data['Sheet1'][3]['B3']);
 
         // percent value formatted as string
-        self::assertEquals('100.00%', $data['Sheet1'][2]['D2']);
+        self::assertSame('100.00%', $data['Sheet1'][2]['D2']);
 
         // number formatted with thousands separator
-        self::assertEquals('-123,456,789.54', $data['Sheet1'][8]['A8']);
+        self::assertSame('-123,456,789.54', $data['Sheet1'][8]['A8']);
     }
 }

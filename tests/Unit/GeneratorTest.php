@@ -11,12 +11,13 @@ use SaschaKliche\PhpXlsxReader\XlsxReader;
 class GeneratorTest extends AbstractTestCase
 {
     #[Test]
-    function it_reads_using_generator_with_cell_address()
+    function it_reads_using_generator_with_cell_addresses()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
+        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->useCellAddress();
 
-        foreach ($reader->useCellAddress()->read() as $worksheetName => $rows) {
+        foreach ($reader->read() as $worksheetName => $rows) {
             self::assertIsString($worksheetName);
             self::assertInstanceOf(Generator::class, $rows);
 
@@ -34,12 +35,13 @@ class GeneratorTest extends AbstractTestCase
     }
 
     #[Test]
-    function it_reads_using_generator_with_column_index()
+    function it_reads_using_generator_with_column_indexes()
     {
         $reader = new XlsxReader();
-        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
+        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->useColumnIndex();
 
-        foreach ($reader->useColumnIndex()->read() as $worksheetName => $rows) {
+        foreach ($reader->read() as $worksheetName => $rows) {
             self::assertIsString($worksheetName);
 
             foreach ($rows as $rowIndex => $row) {

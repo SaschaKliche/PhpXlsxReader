@@ -16,7 +16,8 @@ class HyperlinkTest extends AbstractTestCase
         $reader = new XlsxReader();
         $reader->open(self::INPUT_FILES_DIR . 'Hyperlink.xlsx');
 
-        $data = $reader->returnCellObjects(readHyperlinks: true)->readAsArray();
+        $data = $reader
+            ->returnCellObjects(readHyperlinks: true)->readAsArray();
 
         self::assertInstanceOf(Cell::class, $data['Tabelle1'][1]['A1']);
 

@@ -23,7 +23,7 @@ class ConfigurationTest extends TestCase
         self::assertTrue($configuration->get(Configuration::SKIP_MISSING_CELLS));
         self::assertTrue($configuration->get(Configuration::SKIP_MISSING_ROWS));
         self::assertTrue($configuration->get(Configuration::USE_CELL_ADDRESS));
-        self::assertEquals([], $configuration->get(Configuration::WORKSHEETS_TO_LOAD));
+        self::assertSame([], $configuration->get(Configuration::WORKSHEETS_TO_LOAD));
     }
 
     #[Test]
@@ -40,7 +40,7 @@ class ConfigurationTest extends TestCase
         $customDefault = 'my-default';
         $configuration = new Configuration;
 
-        self::assertEquals($customDefault, $configuration->get('does-not-exist', $customDefault));
+        self::assertSame($customDefault, $configuration->get('does-not-exist', $customDefault));
     }
 
     #[Test]
