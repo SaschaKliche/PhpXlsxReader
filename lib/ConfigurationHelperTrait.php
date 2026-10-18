@@ -96,6 +96,12 @@ trait ConfigurationHelperTrait
         return $this;
     }
 
+    public function worksheet(string $worksheetName): self
+    {
+        $this->configuration->set(Configuration::WORKSHEETS_TO_LOAD, [$worksheetName]);
+        return $this;
+    }
+
     public function worksheets(array $worksheetNames): self
     {
         $this->configuration->set(Configuration::WORKSHEETS_TO_LOAD, $worksheetNames);

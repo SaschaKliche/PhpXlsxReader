@@ -15,16 +15,18 @@ class ReferenceTest extends TestCase
     #[Test]
     function it_calculates_index_only_if_needed()
     {
+        // Pre-built up to 702 (ZZ), neither 15 nor 500 have to be calculated
         Reference::convertIndexToCellAddress(1, 15);
         Reference::convertIndexToCellAddress(1, 500);
-        self::assertEquals(0, Reference::getNumberOfCalculatedIndexes());
+        self::assertSame(0, Reference::getNumberOfCalculatedIndexes());
 
-        // pre-built up to ZZ (702)
-        Reference::convertIndexToCellAddress(1, 1000);
-        self::assertEquals(1, Reference::getNumberOfCalculatedIndexes());
+        // 1000 has to be calculated
+        Reference::convertIndexToCellAddress(1, 1_000);
+        self::assertSame(1, Reference::getNumberOfCalculatedIndexes());
 
-        Reference::convertIndexToCellAddress(1, 1000);
-        self::assertEquals(1, Reference::getNumberOfCalculatedIndexes());
+        // 1000 has already been calculated so it won't be calculated again
+        Reference::convertIndexToCellAddress(1, 1_000);
+        self::assertSame(1, Reference::getNumberOfCalculatedIndexes());
     }
 
     static function provideIndexData(): Generator
@@ -41,7 +43,7 @@ class ReferenceTest extends TestCase
     {
         $result = Reference::convertCellAddressToIndex($cellAddress);
 
-        self::assertEquals($expectedResult, $result);
+        self::assertSame($expectedResult, $result);
     }
 
     static function provideColumnAddressData(): Generator
@@ -87,7 +89,7 @@ class ReferenceTest extends TestCase
     {
         $columnAddress = Reference::convertColumnIndexToAddress($columnIndex);
 
-        self::assertEquals($expectedCellAddress, $columnAddress);
+        self::assertSame($expectedCellAddress, $columnAddress);
     }
 
     static function provideCellAddressData(): Generator
@@ -133,13 +135,14 @@ class ReferenceTest extends TestCase
     {
         $cellAddress = Reference::convertIndexToCellAddress($rowIndex, $columnIndex);
 
-        self::assertEquals($expectedCellAddress, $cellAddress);
+        self::assertSame($expectedCellAddress, $cellAddress);
     }
 
     #[Test]
     function illegal_index_values_throw_an_exception()
     {
         $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Illegal row value 0');
 
         Reference::convertIndexToCellAddress(0, 42);
     }

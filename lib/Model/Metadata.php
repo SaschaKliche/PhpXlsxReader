@@ -20,8 +20,12 @@ class Metadata
         return isset($this->metadata[$propertyName]);
     }
 
-    public function get(string $propertyName): mixed
+    public function get(string $propertyName = ''): mixed
     {
+        if ($propertyName === '') {
+            return $this->metadata;
+        }
+
         return $this->metadata[$propertyName] ?? null;
     }
 }

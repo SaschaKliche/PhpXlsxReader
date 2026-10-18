@@ -19,7 +19,7 @@ class XlsxReader extends AbstractReader
 {
     use BenchmarkHelperTrait, ConfigurationHelperTrait;
 
-    public const string VERSION = '1.4.1';
+    public const string VERSION = '1.4.2';
 
     protected const string PATH_WORKBOOK = '#xl/workbook.xml';
 
@@ -49,6 +49,11 @@ class XlsxReader extends AbstractReader
     public function __construct(array $configuration = [])
     {
         $this->configuration = Configuration::from($configuration);
+    }
+
+    public static function from(string $filePath, array $configuration = []): self
+    {
+        return (new self($configuration))->open($filePath);
     }
 
     /*
@@ -316,9 +321,9 @@ class XlsxReader extends AbstractReader
      * For testing purposes only.
      * Subject to removal without further notice.
      */
-    public function dateSystem1900(): bool
+    public function getConfiguration(): Configuration
     {
-        return $this->configuration->get(Configuration::USE_DATE_SYSTEM_1900);
+        return $this->configuration;
     }
 
     /**

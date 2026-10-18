@@ -25,9 +25,25 @@ class MetadataTest extends AbstractTestCase
         self::assertTrue($metadata->has(Metadata::LAST_MODIFIED_BY));
         self::assertTrue($metadata->has(Metadata::MODIFIED));
         self::assertFalse($metadata->has('invalid-property-name'));
-        self::assertEquals('Sascha Kliche', $metadata->get(Metadata::CREATOR));
+        self::assertSame('Sascha Kliche', $metadata->get(Metadata::CREATOR));
         // e.g. 2026-03-24T17:17:24Z
         self::assertMatchesRegularExpression('#^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$#', $metadata->get(Metadata::CREATED));
         self::assertMatchesRegularExpression('#^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$#', $metadata->get(Metadata::MODIFIED));
+    }
+
+    #[Test]
+    function metadata_can_be_returned_as_an_array()
+    {
+        $expected = [
+            Metadata::CREATOR,
+            Metadata::LAST_MODIFIED_BY,
+            Metadata::CREATED,
+            Metadata::MODIFIED,
+        ];
+
+        $metadata = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->getMetadata();
+
+        self::assertSame($expected, array_keys($metadata->get()));
     }
 }

@@ -1,5 +1,12 @@
 # Release Notes
 
+## v1.4.2 - 2026-10-18
+
+- `Metadata::get()` returns the all metadata values as an array if called without parameters
+- `Configuration::get()` returns the current configuration as an array if called without parameters
+- Added `worksheet()` configuration helper method to load a single worksheet
+- Added static `XlsxReader::from()` to open a file without having to instantiate the class first
+
 ## v1.4.1 - 2026-10-04
 
 - Fix documentation

@@ -30,73 +30,73 @@ class WorksheetReaderTest extends AbstractTestCase
 
     static function provideShouldLoadData(): Generator
     {
-        yield 'empty configuration includes request' => [
-            [],
-            1,
-            true,
+        yield 'empty configuration includes requested index' => [
+            'configuration' => [],
+            'index' => 1,
+            'expected' => true,
         ];
 
-        yield 'single item configuration includes request index' => [
+        yield 'single item configuration includes requested index' => [
             [1 => 0],
             1,
             true,
         ];
 
-        yield 'single item configuration excludes request index' => [
+        yield 'single item configuration excludes requested index' => [
             [1 => 0],
             4,
             false,
         ];
 
-        yield 'simple configuration includes request index' => [
+        yield 'simple configuration includes requested index' => [
             [1 => 0, 2 => 1, 5 => 2],
             5,
             true,
         ];
 
-        yield 'simple configuration excludes request index' => [
+        yield 'simple configuration excludes requested index' => [
             [1 => 0, 2 => 1, 5 => 2],
             9,
             false,
         ];
 
-        yield 'min configuration includes request index' => [
+        yield 'min configuration includes requested index' => [
             [Configuration::MIN => 3],
             5,
             true,
         ];
 
-        yield 'min configuration excludes request index below min' => [
+        yield 'min configuration excludes requested index below min' => [
             [Configuration::MIN => 3],
             1,
             false,
         ];
 
-        yield 'max configuration includes request index' => [
+        yield 'max configuration includes requested index' => [
             [Configuration::MAX => 3],
             1,
             true,
         ];
 
-        yield 'max configuration excludes request index above max' => [
+        yield 'max configuration excludes requested index above max' => [
             [Configuration::MAX => 3],
             5,
             false,
         ];
 
-        yield 'min/max configuration includes request index' => [
+        yield 'min/max configuration includes requested index' => [
             [Configuration::MIN => 3, Configuration::MAX => 6],
             5,
             true,
         ];
 
-        yield 'min/max configuration excludes request index below min' => [
+        yield 'min/max configuration excludes requested index below min' => [
             [Configuration::MIN => 3, Configuration::MAX => 6],
             1,
             false,
         ];
 
-        yield 'min/max configuration excludes request index above max' => [
+        yield 'min/max configuration excludes requested index above max' => [
             [Configuration::MIN => 5, Configuration::MAX => 3],
             9,
             false,
@@ -107,6 +107,6 @@ class WorksheetReaderTest extends AbstractTestCase
     #[DataProvider('provideShouldLoadData')]
     function it_determines_if_a_column_or_row_should_be_loaded(array $configuration, int $index, bool $expected)
     {
-        self::assertEquals($expected, WorksheetReader::shouldLoadRowOrColumn($configuration, $index));
+        self::assertSame($expected, WorksheetReader::shouldLoadRowOrColumn($configuration, $index));
     }
 }
