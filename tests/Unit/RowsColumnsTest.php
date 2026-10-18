@@ -100,9 +100,10 @@ class RowsColumnsTest extends AbstractTestCase
             ->columns(['Sheet1' => ['B', 'c', 4, 5]])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" has rows 1, 2, 3, 4, 6, 7, 8 and columns A - D (1 - 4)
         // row 5 is missing, it is not returned because we did not request to include missing rows
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([1, 2, 3, 4, 6, 7, 8], array_keys($data['Sheet1'])); // rows
 
         // column A has not been requested so it is not returned for any of the rows
@@ -119,14 +120,12 @@ class RowsColumnsTest extends AbstractTestCase
 
         // "Sheet2" has rows 1, 2 and columns A - C (1 - 3)
         // the column restrictions only apply to "Sheet1", so "Sheet2" is returned as is
-        self::assertArrayHasKey('Sheet2', $data);
         self::assertSame([1, 2], array_keys($data['Sheet2']));
         self::assertSame(['A1', 'B1', 'C1'], array_keys($data['Sheet2'][1]));
         // rows 2 only has data in column A
         self::assertSame(['A2'], array_keys($data['Sheet2'][2]));
 
         // "Tables" has rows 1 - 7 and columns A - C (1 - 3)
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([1, 2, 3, 4, 5, 6, 7], array_keys($data['Table']));
         self::assertSame(['A1', 'B1', 'C1'], array_keys($data['Table'][1]));
         self::assertSame(['A2', 'B2', 'C2'], array_keys($data['Table'][2]));
@@ -145,19 +144,18 @@ class RowsColumnsTest extends AbstractTestCase
             ->rows([2, 3, 4, 5])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" has rows 1, 6, 7, 8, but we did not request them so they are missing
         // rows 2 - 4 have been requested and are present in the file, they are returned
         // row 5 has been requested but does not exist in the file
         // it is not present because we did not request to include missing rows
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([2, 3, 4], array_keys($data['Sheet1']));
 
         // "Sheet2" only has rows 1 and 2, but row 1 has not been requested
-        self::assertArrayHasKey('Sheet2', $data);
         self::assertSame([2], array_keys($data['Sheet2']));
 
         // "Table" has rows 1 - 7
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([2, 3, 4, 5], array_keys($data['Table']));
     }
 
@@ -170,20 +168,19 @@ class RowsColumnsTest extends AbstractTestCase
             ->rows(['Sheet1' => [2, 3, 4, 5]])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" also has rows 1, 6, 7, 8, but we did not request them so they are missing
         // rows 2 - 4 have been requested and are present in the file, they are returned
         // row 5 has been requested but does not exist in the file
         // it is still present because we requested to include missing rows
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([2, 3, 4, 5], array_keys($data['Sheet1']));
 
         // "Sheet2" is present in the file, has not been requested with restrictions, is returned as-is
         // "Sheet2" only has rows 1 and 2
-        self::assertArrayHasKey('Sheet2', $data);
         self::assertSame([1, 2], array_keys($data['Sheet2']));
 
         // "Table" is present in the file, has not been requested with restrictions, is returned as-is
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([1, 2, 3, 4, 5, 6, 7], array_keys($data['Table']));
     }
 
@@ -196,16 +193,15 @@ class RowsColumnsTest extends AbstractTestCase
             ->rows(['Sheet1' => [4, 5], 'Sheet2' => [2], 'Table' => [1, 3]])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" has rows 1, 2, 3, 4, 6, 7, 8 => we requested 4 and 5, 5 does not exist
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([4], array_keys($data['Sheet1']));
 
         // "Sheet2" only has rows 1 and 2 => we requested only 2 which exists
-        self::assertArrayHasKey('Sheet2', $data);
         self::assertSame([2], array_keys($data['Sheet2']));
 
         // "Table" has rows 1 - 7 => we requested 1 and 3, both exist
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([1, 3], array_keys($data['Table']));
     }
 
@@ -218,20 +214,19 @@ class RowsColumnsTest extends AbstractTestCase
             ->rows(['Sheet1' => [Configuration::MIN => 2, Configuration::MAX => 5]])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" also has rows 1, 6, 7, 8, but we did not request them so they are missing
         // rows 2 - 4 have been requested and are present in the file, they are returned
         // row 5 has been requested but does not exist in the file
         // it is still present because we requested to include missing rows
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([2, 3, 4, 5], array_keys($data['Sheet1']));
 
         // "Sheet2" is present in the file, has not been requested with restrictions, is returned as-is
         // "Sheet2" only has rows 1 and 2
-        self::assertArrayHasKey('Sheet2', $data);
         self::assertSame([1, 2], array_keys($data['Sheet2']));
 
         // "Table" is present in the file, has not been requested with restrictions, is returned as-is
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([1, 2, 3, 4, 5, 6, 7], array_keys($data['Table']));
     }
 
@@ -244,20 +239,19 @@ class RowsColumnsTest extends AbstractTestCase
             ->rows(['Sheet1' => [Configuration::MIN => 3]])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" has rows 1 + 2, but we did not request them so they are missing
         // rows 3 - 4 have been requested and are present in the file
         // row 5 has been requested but does not exist in the file
         // rows 6 - 8 are present and requested
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([3, 4, 6, 7, 8], array_keys($data['Sheet1']));
 
         // "Sheet2" is present in the file, has not been requested with restrictions, is returned as-is
         // "Sheet2" only has rows 1 and 2
-        self::assertArrayHasKey('Sheet2', $data);
         self::assertSame([1, 2], array_keys($data['Sheet2']));
 
         // "Table" is present in the file, has not been requested with restrictions, is returned as-is
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([1, 2, 3, 4, 5, 6, 7], array_keys($data['Table']));
     }
 
@@ -269,19 +263,18 @@ class RowsColumnsTest extends AbstractTestCase
             ->rows([Configuration::MIN => 3])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" has rows 1 + 2, but we did not request them so they are missing
         // rows 3 - 4 have been requested and are present in the file
         // row 5 has been requested but does not exist in the file
         // rows 6 - 8 are present and requested
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([3, 4, 6, 7, 8], array_keys($data['Sheet1']));
 
-        // "Sheet2" only has rows 1 and 2, it is an empty row but not a missing row, so it is still returned
-        self::assertArrayHasKey('Sheet2', $data);
+        // "Sheet2" only has rows 1 and 2, no rows are returned for that worksheet
         self::assertSame([], array_keys($data['Sheet2']));
 
         // "Table" has rows 1 - 7
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([3, 4, 5, 6, 7], array_keys($data['Table']));
     }
 
@@ -293,16 +286,15 @@ class RowsColumnsTest extends AbstractTestCase
             ->rows([Configuration::MAX => 3])
             ->readAsArray();
 
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], array_keys($data));
+
         // "Sheet1" has rows 1 - 8
-        self::assertArrayHasKey('Sheet1', $data);
         self::assertSame([1, 2, 3], array_keys($data['Sheet1']));
 
         // "Sheet2" only has rows 1 and 2
-        self::assertArrayHasKey('Sheet2', $data);
         self::assertSame([1, 2], array_keys($data['Sheet2']));
 
         // "Table" has rows 1 - 7
-        self::assertArrayHasKey('Table', $data);
         self::assertSame([1, 2, 3], array_keys($data['Table']));
     }
 }
