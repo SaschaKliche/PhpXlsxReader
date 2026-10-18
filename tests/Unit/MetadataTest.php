@@ -30,4 +30,20 @@ class MetadataTest extends AbstractTestCase
         self::assertMatchesRegularExpression('#^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$#', $metadata->get(Metadata::CREATED));
         self::assertMatchesRegularExpression('#^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$#', $metadata->get(Metadata::MODIFIED));
     }
+
+    #[Test]
+    function metadata_can_be_returned_as_an_array()
+    {
+        $expected = [
+            Metadata::CREATOR,
+            Metadata::LAST_MODIFIED_BY,
+            Metadata::CREATED,
+            Metadata::MODIFIED,
+        ];
+
+        $metadata = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->getMetadata();
+
+        self::assertSame($expected, array_keys($metadata->get()));
+    }
 }

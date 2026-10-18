@@ -349,7 +349,7 @@ $metadata = $reader
     ->getMetadata();                    // Metadata instance
 
 $metadata->has(<property_name>);        // bool
-$metadata->get(<property_name>);        // string|null
+$metadata->get(<property_name>);        // mixed
 ```
 
 The available metadata properties are:
@@ -362,6 +362,18 @@ Metadata::MODIFIED           // name of the person who last modified the file
 
 `CREATOR` and `MODIFIED` are date/time strings in the form,
 `Y-m-d\\TH:i:sp`, e.g. `2026-03-24T17:17:24Z`.
+
+All metadata values can be retrieved as an array indexed by the property names:
+```php
+$metadata = XlsxReader::from(<pathToInputFile>)
+    ->getMetadata()
+    ->get();
+
+// $metadata[Metadata::CREATED]
+// $metadata[Metadata::CREATOR]
+// $metadata[Metadata::LAST_MODIFIED_BY]
+// $metadata[Metadata::MODIFIED]
+```
 
 ## Configuration
 
