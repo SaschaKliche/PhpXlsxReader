@@ -17,7 +17,7 @@ class HeaderTest extends AbstractTestCase
 
         $data = $reader
             ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
-            ->worksheets(['Sheet1'])
+            ->worksheet('Sheet1')
             ->readWithHeader();
 
         // the column header values can be retrieved per worksheet
@@ -66,7 +66,7 @@ class HeaderTest extends AbstractTestCase
 
         $data = $reader
             ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
-            ->worksheets(['Sheet2'])
+            ->worksheet('Sheet2')
             ->readWithHeader(3);
 
         $headers = $reader->getHeaders('Sheet2');
@@ -263,7 +263,7 @@ class HeaderTest extends AbstractTestCase
         $reader = new XlsxReader();
         $reader
             ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
-            ->worksheets(['Sheet3'])
+            ->worksheet('Sheet3')
             ->readWithHeader();
 
         // retrieving the header values by worksheet name
@@ -281,7 +281,7 @@ class HeaderTest extends AbstractTestCase
         $reader = new XlsxReader();
         $reader
             ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
-            ->worksheets(['Sheet3'])
+            ->worksheet('Sheet3')
             ->readWithHeader();
 
         // retrieving the header values by worksheet index number
@@ -309,7 +309,7 @@ class HeaderTest extends AbstractTestCase
 
         $data = $reader
             ->open(self::INPUT_FILES_DIR . 'HeaderRow.xlsx')
-            ->worksheets(['Sheet3'])
+            ->worksheet('Sheet3')
             ->includeMissingCells()
             ->readWithHeader();
 

@@ -2,6 +2,7 @@
 
 ## v1.4.2
 
+- Added `worksheet()` configuration helper method to load a single worksheet
 - Added static `XlsxReader::from()` to open a file without having to instantiate the class first
 
 ## v1.4.1 - 2026-10-04

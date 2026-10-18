@@ -183,9 +183,14 @@ $data = $reader->useCellAddress()->readAsArray();
 $data = $reader->useColumnIndex()->readAsArray();
 // $data[<worksheetname (string)>][<rowindex (int)>][<columnindex (int)>]
 
+// reading selected worksheets' data
+$sheet1 = $reader->worksheets(['Sheet1', 'Sheet2'])->readAsArray();
+// $data['Sheet1'][<rowindex (int)>][<celladdress (string)>]
+// $data['Sheet2'][<rowindex (int)>][<celladdress (string)>]
+
 // reading just a single worksheet's data
-$sheet1 = $reader->worksheets(['sheet1'])->readAsArray();
-// $data['sheet1'][<rowindex (int)>][<celladdress (string)>]
+$sheet1 = $reader->worksheet('Sheet1')->readAsArray();
+// $data['Sheet1'][<rowindex (int)>][<celladdress (string)>]
 ```
 
 ### `readWithHeader()`: Reading a workbook with header row as an associative array
@@ -311,7 +316,7 @@ $worksheetNames = $reader
     ->open(<pathToInputFile>)
     ->getWorksheetNames();
 
-// e.g. ['sheet1', 'sheet2', 'sheet3']
+// e.g. ['Sheet1', 'Sheet2', 'Sheet3']
 ```
 
 ### `getWorksheetName()`: Retrieve the name of a single worksheet
@@ -328,7 +333,7 @@ $worksheetName = $reader
     ->open(<pathToInputFile>)
     ->getWorksheetName(2);
 
-// e.g. 'sheet2'
+// e.g. 'Sheet2'
 ```
 
 ### `getMetadata()`: Retrieve workbook metadata
@@ -401,6 +406,7 @@ $reader = new XlsxReader(<pathToInputFile>, $configuration);
 - [`useColumnIndex()`](#usecolumnindex-indexing-cells-by-column-index-number)
 - [`useDateSystem1900()`](#usedatesystem1900-use-1900-date-system) (default)
 - [`useDateSystem1904()`](#usedatesystem1904-use-1904-date-system)
+- [`worksheet(string $worksheetName)`](#worksheet-selecting-a-single-worksheet-to-load-from-a-workbook)
 - [`worksheets(array $worksheetNames)`](#worksheets-selecting-the-worksheets-to-load-from-a-workbook) (default: `[]`)
 
 `column()` and `columns()` accept columns as index values (1, 2, ...) or characters ('A', 'B', ...).
@@ -833,6 +839,25 @@ $data = $reader
 
 The default is an empty array (`[]`) meaning all existing rows are loaded.
 
+### `worksheet()`: Selecting a single worksheet to load from a workbook
+
+The equivalent of setting the option `Configuration::WORKSHEETS_TO_LOAD`.
+
+By default all worksheets are loaded.
+
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$reader = new XlsxReader();
+
+$sheet1 = $reader
+    ->open(<pathToInputFile>)
+    ->worksheet('Sheet1')
+    ->readAsArray();
+
+// $data['Sheet1'][<rowindex (int)>][<celladdress (string)>]
+```
+
 ### `worksheets()`: Selecting the worksheets to load from a workbook
 
 The equivalent of setting the option `Configuration::WORKSHEETS_TO_LOAD`.
@@ -846,11 +871,11 @@ $reader = new XlsxReader();
 
 $sheet1 = $reader
     ->open(<pathToInputFile>)
-    ->worksheets(['sheet1', 'sheet2'])
+    ->worksheets(['Sheet1', 'Sheet2'])
     ->readAsArray();
 
-// $data['sheet1'][<rowindex (int)>][<celladdress (string)>]
-// $data['sheet2'][<rowindex (int)>][<celladdress (string)>]
+// $data['Sheet1'][<rowindex (int)>][<celladdress (string)>]
+// $data['Sheet2'][<rowindex (int)>][<celladdress (string)>]
 ```
 
 ## Cell objects

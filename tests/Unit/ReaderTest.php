@@ -16,12 +16,27 @@ class ReaderTest extends AbstractTestCase
     }
 
     #[Test]
-    function it_selects_the_worksheets_to_load()
+    function it_selects_multiple_worksheets_to_load()
     {
         $reader = new XlsxReader();
         $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
 
-        $data = $reader->worksheets(['Sheet2'])->readAsArray();
+        $data = $reader->worksheets(['Sheet1', 'Sheet2'])->readAsArray();
+
+        // workbook contains three worksheets
+        self::assertSame(['Sheet1', 'Sheet2', 'Table'], $reader->getWorksheetNames());
+
+        // Sheet1 and Sheet2 have been loaded, Table has not been loaded
+        self::assertSame(['Sheet1', 'Sheet2'], array_keys($data));
+    }
+
+    #[Test]
+    function it_selects_a_single_worksheet_to_load()
+    {
+        $reader = new XlsxReader();
+        $reader->open(self::INPUT_FILES_DIR . 'Basic.xlsx');
+
+        $data = $reader->worksheet('Sheet2')->readAsArray();
 
         // workbook contains three worksheets
         self::assertSame(['Sheet1', 'Sheet2', 'Table'], $reader->getWorksheetNames());

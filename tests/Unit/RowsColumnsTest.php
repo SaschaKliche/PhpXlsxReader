@@ -14,7 +14,7 @@ class RowsColumnsTest extends AbstractTestCase
     function it_loads_a_specific_row()
     {
         $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
-            ->worksheets(['Sheet2'])
+            ->worksheet('Sheet2')
             ->row(1)
             ->readAsArray();
 
@@ -36,7 +36,7 @@ class RowsColumnsTest extends AbstractTestCase
     function it_loads_a_specific_cell_with_column_character()
     {
         $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
-            ->worksheets(['Sheet2'])
+            ->worksheet('Sheet2')
             ->rows([1])
             ->column('B')
             ->readAsArray();
