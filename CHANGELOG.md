@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Added parameter `$withColumnIndex` to configuration helper `column()` to support returning rows with a single requested column without column index,
+  i.e. each row only contains the single column's value
+
+## v1.4.2 - 2026-10-18
+
 - `Metadata::get()` returns the all metadata values as an array if called without parameters
 - `Configuration::get()` returns the current configuration as an array if called without parameters
 - Added `worksheet()` configuration helper method to load a single worksheet

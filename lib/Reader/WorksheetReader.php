@@ -46,6 +46,8 @@ class WorksheetReader extends AbstractReader
     protected const string TYPE_VALUE_STRING = 'str';
 
     protected array $customFormats = [];
+    protected bool $singleColumnRows;
+    protected bool $singleColumnRowsWithIndex;
     protected bool $skipMissingCells;
     protected bool $skipMissingRows;
     protected bool $readFormulas;
@@ -80,6 +82,8 @@ class WorksheetReader extends AbstractReader
         $this->initRowsOrColumnsToLoad(Configuration::COLUMNS_TO_LOAD, $this->columnsToLoad);
         $this->transformColumnsToIndexes();
         $this->initRowsOrColumnsToLoad(Configuration::ROWS_TO_LOAD, $this->rowsToLoad);
+        $this->singleColumnRows = (count($this->columnsToLoad) === 1);
+        $this->singleColumnRowsWithIndex = $this->configuration->get(Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX);
     }
 
     /**
@@ -204,7 +208,7 @@ class WorksheetReader extends AbstractReader
     /**
      * @throws Exception
      */
-    protected function handleRow(XmlReader $reader, int $rowIndex): array
+    protected function handleRow(XmlReader $reader, int $rowIndex): mixed
     {
         $cells = [];
         $previousCellIndex = 0;
@@ -257,6 +261,10 @@ class WorksheetReader extends AbstractReader
             }
 
             $cells[$cellAddress] = $this->handleCell($reader, $dataType, $formatId, $cellFormatString, $originalCellAddress);
+        }
+
+        if ($this->singleColumnRows && !$this->singleColumnRowsWithIndex) {
+            return array_pop($cells);
         }
 
         return $cells;

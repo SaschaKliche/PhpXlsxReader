@@ -392,6 +392,7 @@ $configuration = [
     Configuration::READ_FORMULAS => false, // only if Configuration::RETURN_CELL_OBJECTS set to true
     Configuration::READ_HYPERLINKS => false, // only if Configuration::RETURN_CELL_OBJECTS set to true
     Configuration::ROWS_TO_LOAD => [],
+    Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX => true, // only effective if Configuration::COLUMNS_TO_LOAD specifies a single column
     Configuration::SKIP_MISSING_CELLS => true,
     Configuration::SKIP_MISSING_ROWS => true,
     Configuration::USE_CELL_ADDRESS => true,
@@ -644,10 +645,11 @@ $data = $reader
 
 ```php
 // $column can be either the column index (1, 2, ...) or the character  ('A', 'B', ...)
-column(int|string $column): XlsxReader
+column(int|string $column, bool $withColumnIndex = true): XlsxReader
 ```
 
 The equivalent of setting the option `Configuration::COLUMNS_TO_LOAD` to a single value.
+The parameter `$withColumnIndex` is the equivalent of setting the option `Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX`.
 
 Loads data for the given column from all available worksheets unless restricted
 by using [`worksheets()`](#worksheets-selecting-the-worksheets-to-load-from-a-workbook).
@@ -660,6 +662,18 @@ $data = (new XlsxReader())
     ->open(<pathToInputFile>)
     ->column(3)
     ->readAsArray();
+
+/*
+[
+    'Sheet1' => [
+        1 => ['C1' => 'Column C'], // each row is still an array indexed by the column index even though it only holds a single column
+        2 => ['C2' => -42],
+        3 => ['C3' => 3.14],
+        ...
+    ],
+    ...
+]
+*/
 ```
 
 Using a column character:
@@ -670,6 +684,28 @@ $data = (new XlsxReader())
     ->open(<pathToInputFile>)
     ->column('C')
     ->readAsArray();
+```
+
+If `$withColumnIndex` is set to `false`, the resulting rows will only contain the value from the requested column:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+$data = (new XlsxReader())
+    ->open(<pathToInputFile>)
+    ->column(column: 'C', withColumnIndex: false)
+    ->readAsArray();
+
+/*
+[
+    'Sheet1' => [
+        1 => 'Column C', // each row is no longer an array, just the value of the single column
+        2 => -42,
+        3 => 3.14,
+        ...
+    ],
+    ...
+]
+*/
 ```
 
 ### `columns()`: Selecting the columns to load from the worksheets

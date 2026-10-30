@@ -15,6 +15,7 @@ class Configuration
     public const int COLUMNS_TO_LOAD = 7;
     public const int ROWS_TO_LOAD = 8;
     public const int WORKSHEETS_TO_LOAD = 9;
+    public const int SINGLE_COLUMN_ROWS_WITH_INDEX = 10;
 
     protected array $configuration = [
         self::CUSTOM_FORMATS => [],
@@ -28,6 +29,7 @@ class Configuration
         self::COLUMNS_TO_LOAD => [],
         self::ROWS_TO_LOAD => [],
         self::WORKSHEETS_TO_LOAD => [],
+        self::SINGLE_COLUMN_ROWS_WITH_INDEX => true,
     ];
 
     public const string MAX = 'max';

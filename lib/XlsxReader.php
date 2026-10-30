@@ -187,6 +187,14 @@ class XlsxReader extends AbstractReader
             foreach ($rows as $rowIndex => $row) {
                 $data[$worksheetName][$rowIndex] = [];
 
+                if (!is_array($row)) {
+                    // Single column row containing a single value  that has been returned as value without column index
+                    // because Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX has been set to false.
+                    // Otherwise $row will always be an array here.
+                    $data[$worksheetName][$rowIndex] = $row;
+                    continue;
+                }
+
                 foreach ($row as $cellAddress => $cell) {
                     $data[$worksheetName][$rowIndex][$cellAddress] = $cell;
                 }

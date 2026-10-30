@@ -66,9 +66,10 @@ trait ConfigurationHelperTrait
         return $this;
     }
 
-    public function column(int|string $column): self
+    public function column(int|string $column, bool $withColumnIndex = true): self
     {
         $this->configuration->set(Configuration::COLUMNS_TO_LOAD, [$column]);
+        $this->configuration->set(Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX, $withColumnIndex);
         return $this;
     }
 
