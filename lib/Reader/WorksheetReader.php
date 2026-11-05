@@ -187,6 +187,10 @@ class WorksheetReader extends AbstractReader
             }
 
             $attributes = $this->getAttributes($reader, [self::ROW_ATTRIBUTE_ROW_NUMBER]);
+            if (!isset($attributes[self::ROW_ATTRIBUTE_ROW_NUMBER])) {
+                continue;
+            }
+
             $rowIndex = (int) $attributes[self::ROW_ATTRIBUTE_ROW_NUMBER];
 
             if (!$this->skipMissingRows) {
@@ -221,7 +225,14 @@ class WorksheetReader extends AbstractReader
                 continue;
             }
 
-            $attributes = $this->getAttributes($reader, [self::CELL_ATTRIBUTE_REFERENCE, self::CELL_ATTRIBUTE_TYPE, self::CELL_ATTRIBUTE_STYLE]);
+            $attributes = $this->getAttributes(
+                $reader,
+                [self::CELL_ATTRIBUTE_REFERENCE, self::CELL_ATTRIBUTE_TYPE, self::CELL_ATTRIBUTE_STYLE]
+            );
+            if (!isset($attributes[self::CELL_ATTRIBUTE_REFERENCE])) {
+                continue;
+            }
+
             $originalCellAddress = $cellAddress = $attributes[self::CELL_ATTRIBUTE_REFERENCE];
             $cellIndex = Reference::convertCellAddressToIndex($cellAddress)[Reference::COLUMN];
 
