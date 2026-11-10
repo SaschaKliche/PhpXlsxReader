@@ -190,7 +190,7 @@ class XlsxReader extends AbstractReader
                 if (!is_array($row)) {
                     // Single column row containing a single value  that has been returned as value without column index
                     // because Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX has been set to false.
-                    // Otherwise $row will always be an array here.
+                    // Otherwise, $row will always be an array here.
                     $data[$worksheetName][$rowIndex] = $row;
                     continue;
                 }
@@ -205,6 +205,9 @@ class XlsxReader extends AbstractReader
     }
 
     /**
+     * @param int|array $headerRowIndex
+     *      The default is 0 because 1 might not be the first available row.
+     * @return array
      * @throws Exception
      */
     public function readWithHeader(int|array $headerRowIndex = 0): array
@@ -265,6 +268,8 @@ class XlsxReader extends AbstractReader
     }
 
     /**
+     * @param int|string $worksheet
+     *      Name of the worksheet or 1-based index.
      * @return string[]|string[][]
      */
     public function getHeaders(int|string $worksheet = ''): array
@@ -276,6 +281,7 @@ class XlsxReader extends AbstractReader
                 throw new RuntimeException('No worksheet for index "' . $index. '"');
             }
         }
+
         if ($worksheet === '') {
             return $this->headers;
         }
@@ -300,6 +306,11 @@ class XlsxReader extends AbstractReader
         return $this->metadata;
     }
 
+    /**
+     * @param int $worksheetIndex
+     *      1-based index.
+     * @return string
+     */
     public function getWorksheetName(int $worksheetIndex): string
     {
         $worksheetNames = $this->getWorksheetNames();

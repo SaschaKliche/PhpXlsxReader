@@ -169,7 +169,7 @@ class RowsColumnsTest extends AbstractTestCase
     {
         $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->includeMissingCells()
-            // these rows are only requested from worksheet "Sheet1", for other worksheets all rows will be returned
+            // these rows are only requested from worksheet "Sheet1", for other worksheets all columns will be returned
             ->columns(['Sheet1' => ['B', 'c', 4, 5]])
             ->readAsArray();
 
