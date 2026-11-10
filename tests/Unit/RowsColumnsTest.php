@@ -258,6 +258,22 @@ class RowsColumnsTest extends AbstractTestCase
     }
 
     #[Test]
+    function it_loads_requested_rows_only_from_a_specific_worksheet_into_an_array()
+    {
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->worksheet('Sheet1')
+            ->rows(['Sheet1' => [2, 3, 4, 5]])
+            ->readAsArray();
+
+        self::assertSame(['Sheet1'], array_keys($data));
+
+        // "Sheet1" also has rows 1, 6, 7, 8, but we did not request them so they are missing
+        // rows 2 - 4 have been requested and are present in the file, they are returned
+        // row 5 has been requested but does not exist in the file
+        self::assertSame([2, 3, 4], array_keys($data['Sheet1']));
+    }
+
+    #[Test]
     function it_loads_requested_rows_individually_by_worksheet_into_an_array()
     {
         $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')

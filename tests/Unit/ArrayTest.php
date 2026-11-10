@@ -203,6 +203,9 @@ class ArrayTest extends AbstractTestCase
         // the 4th row does not contain consecutive cells
         // it has cells A4 and C4, cell B4 is missing but included because missing cells have been requested
         self::assertSame(['A4', 'B4', 'C4'], array_keys($data['Sheet1'][4]));
+        self::assertNotNull($data['Sheet1'][4]['A4']);
+        self::assertNull($data['Sheet1'][4]['B4']); // missing column is null
+        self::assertNotNull($data['Sheet1'][4]['C4']);
 
         // 5th row is missing but included as an empty row
         self::assertSame([], array_keys($data['Sheet1'][5]));
