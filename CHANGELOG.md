@@ -4,6 +4,7 @@
 
 - Added parameter `$withColumnIndex` to configuration helper `column()` to support returning rows with a single requested column without column index,
   i.e. each row only contains the single column's value
+- Fixed a lot of documentation errors and generally improved the documentation
 
 ## v1.4.2 - 2026-10-18
 
