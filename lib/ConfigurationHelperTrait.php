@@ -2,8 +2,29 @@
 
 namespace SaschaKliche\PhpXlsxReader;
 
+use Closure;
+
 trait ConfigurationHelperTrait
 {
+    public function column(int|string $column, bool $withColumnIndex = true): self
+    {
+        $this->configuration->set(Configuration::COLUMNS_TO_LOAD, [$column]);
+        $this->configuration->set(Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX, $withColumnIndex);
+        return $this;
+    }
+
+    /**
+     * @param int[]|string[]|mixed[] $columns
+     */
+    public function columns(array $columns): self
+    {
+        $this->configuration->set(Configuration::COLUMNS_TO_LOAD, $columns);
+        return $this;
+    }
+
+    /**
+     * @param array<int|string, Closure> $formats
+     */
     public function customFormats(array $formats): self
     {
         $this->configuration->set(Configuration::CUSTOM_FORMATS, $formats);
@@ -42,6 +63,21 @@ trait ConfigurationHelperTrait
         return $this;
     }
 
+    public function row(int $row): self
+    {
+        $this->configuration->set(Configuration::ROWS_TO_LOAD, [$row]);
+        return $this;
+    }
+
+    /**
+     * @param int[]|mixed[] $rows
+     */
+    public function rows(array $rows): self
+    {
+        $this->configuration->set(Configuration::ROWS_TO_LOAD, $rows);
+        return $this;
+    }
+
     public function useCellAddress(): self
     {
         $this->configuration->set(Configuration::USE_CELL_ADDRESS, true);
@@ -66,42 +102,27 @@ trait ConfigurationHelperTrait
         return $this;
     }
 
-    public function column(int|string $column): self
+    public function useWorksheetIndexNumbers(): self
     {
-        $this->configuration->set(Configuration::COLUMNS_TO_LOAD, [$column]);
+        $this->configuration->set(Configuration::USE_WORKSHEET_NAMES, false);
         return $this;
     }
 
-    /**
-     * @param int[]|string[]|mixed[] $columns
-     */
-    public function columns(array $columns): self
+    public function useWorksheetNames(): self
     {
-        $this->configuration->set(Configuration::COLUMNS_TO_LOAD, $columns);
+        $this->configuration->set(Configuration::USE_WORKSHEET_NAMES, true);
         return $this;
     }
 
-    public function row(int $row): self
-    {
-        $this->configuration->set(Configuration::ROWS_TO_LOAD, [$row]);
-        return $this;
-    }
-
-    /**
-     * @param int[]|mixed[] $rows
-     */
-    public function rows(array $rows): self
-    {
-        $this->configuration->set(Configuration::ROWS_TO_LOAD, $rows);
-        return $this;
-    }
-
-    public function worksheet(string $worksheetName): self
+    public function worksheet(string|int $worksheetName): self
     {
         $this->configuration->set(Configuration::WORKSHEETS_TO_LOAD, [$worksheetName]);
         return $this;
     }
 
+    /**
+     * @param string[]|int[] $worksheetNames
+     */
     public function worksheets(array $worksheetNames): self
     {
         $this->configuration->set(Configuration::WORKSHEETS_TO_LOAD, $worksheetNames);

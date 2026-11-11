@@ -19,7 +19,7 @@ class XlsxReader extends AbstractReader
 {
     use BenchmarkHelperTrait, ConfigurationHelperTrait;
 
-    public const string VERSION = '1.4.2';
+    public const string VERSION = '1.5.0';
 
     protected const string PATH_WORKBOOK = '#xl/workbook.xml';
 
@@ -148,7 +148,12 @@ class XlsxReader extends AbstractReader
 
         $this->styles = StylesReader::from($this->filePath);
 
-        $worksheetsToLoad = array_flip($this->configuration->get(Configuration::WORKSHEETS_TO_LOAD));
+        $worksheetsPresent = array_keys($this->worksheetNames);
+        $worksheetsToLoad = $this->normalizeWorksheetsToLoad($worksheetsPresent);
+        $useWorksheetNames = $this->configuration->get(Configuration::USE_WORKSHEET_NAMES);
+        if (!$useWorksheetNames) {
+            $worksheetNamesToIndexNumbers = array_flip($worksheetsPresent);
+        }
 
         foreach ($this->worksheetNames as $worksheetName => $sheetRelationshipId) {
             if ($worksheetsToLoad !== [] && !array_key_exists($worksheetName, $worksheetsToLoad)) {
@@ -165,6 +170,14 @@ class XlsxReader extends AbstractReader
                 $this->worksheetNames
             );
 
+            if (!$useWorksheetNames) {
+                $worksheetName = $worksheetNamesToIndexNumbers[$worksheetName] ?? null;
+                if ($worksheetName === null) {
+                    throw new RuntimeException('Invalid worksheet name "' . $worksheetName . '"');
+                }
+                $worksheetName++; // array values are 0-based
+            }
+
             foreach ($worksheet->load() as $row) {
                 yield $worksheetName => $row;
             }
@@ -173,6 +186,31 @@ class XlsxReader extends AbstractReader
         $this->worksheetsLoaded = true;
 
         $this->benchmarkStop();
+    }
+
+    private function normalizeWorksheetsToLoad(array $worksheetsPresent): array
+    {
+        $worksheetsToLoad = $this->configuration->get(Configuration::WORKSHEETS_TO_LOAD);
+
+        foreach ($worksheetsToLoad as &$worksheetToLoad) {
+            if (is_string($worksheetToLoad)) {
+                continue;
+            }
+
+            if (!is_int($worksheetToLoad)) {
+                throw new RuntimeException('Worksheet to load must be a string or an integer');
+            }
+
+            // worksheet index numbers cannot be used to load the worksheet's files
+            // so they are replace with the worksheet' name
+            $worksheetToLoad = $worksheetsPresent[$worksheetToLoad - 1] ?? null;
+
+            if ($worksheetToLoad === null) {
+                throw new RuntimeException('Worksheet with index ' . $worksheetToLoad . ' not found');
+            }
+        }
+
+        return array_flip($worksheetsToLoad);
     }
 
     /**
@@ -187,6 +225,14 @@ class XlsxReader extends AbstractReader
             foreach ($rows as $rowIndex => $row) {
                 $data[$worksheetName][$rowIndex] = [];
 
+                if (!is_array($row)) {
+                    // Single column row containing a single value  that has been returned as value without column index
+                    // because Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX has been set to false.
+                    // Otherwise, $row will always be an array here.
+                    $data[$worksheetName][$rowIndex] = $row;
+                    continue;
+                }
+
                 foreach ($row as $cellAddress => $cell) {
                     $data[$worksheetName][$rowIndex][$cellAddress] = $cell;
                 }
@@ -197,6 +243,9 @@ class XlsxReader extends AbstractReader
     }
 
     /**
+     * @param int|array $headerRowIndex
+     *      The default is 0 because 1 might not be the first available row.
+     * @return array
      * @throws Exception
      */
     public function readWithHeader(int|array $headerRowIndex = 0): array
@@ -257,6 +306,8 @@ class XlsxReader extends AbstractReader
     }
 
     /**
+     * @param int|string $worksheet
+     *      Name of the worksheet or 1-based index.
      * @return string[]|string[][]
      */
     public function getHeaders(int|string $worksheet = ''): array
@@ -268,6 +319,7 @@ class XlsxReader extends AbstractReader
                 throw new RuntimeException('No worksheet for index "' . $index. '"');
             }
         }
+
         if ($worksheet === '') {
             return $this->headers;
         }
@@ -292,6 +344,11 @@ class XlsxReader extends AbstractReader
         return $this->metadata;
     }
 
+    /**
+     * @param int $worksheetIndex
+     *      1-based index.
+     * @return string
+     */
     public function getWorksheetName(int $worksheetIndex): string
     {
         $worksheetNames = $this->getWorksheetNames();

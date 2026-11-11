@@ -70,6 +70,8 @@ class ConfigurationTest extends TestCase
             Configuration::COLUMNS_TO_LOAD => [],
             Configuration::ROWS_TO_LOAD => [],
             Configuration::WORKSHEETS_TO_LOAD => [],
+            Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX => true,
+            Configuration::USE_WORKSHEET_NAMES => true,
         ];
 
         $configuration = new Configuration;
@@ -92,6 +94,8 @@ class ConfigurationTest extends TestCase
             Configuration::COLUMNS_TO_LOAD => [],
             Configuration::ROWS_TO_LOAD => [],
             Configuration::WORKSHEETS_TO_LOAD => ['Sheet1'],
+            Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX => true,
+            Configuration::USE_WORKSHEET_NAMES => true,
         ];
 
         $configurationMap = [
@@ -121,6 +125,8 @@ class ConfigurationTest extends TestCase
             Configuration::COLUMNS_TO_LOAD => [],
             Configuration::ROWS_TO_LOAD => [],
             Configuration::WORKSHEETS_TO_LOAD => ['Sheet1', 'Sheet2'],
+            Configuration::SINGLE_COLUMN_ROWS_WITH_INDEX => true,
+            Configuration::USE_WORKSHEET_NAMES => true,
         ];
 
         $reader = new XlsxReader();

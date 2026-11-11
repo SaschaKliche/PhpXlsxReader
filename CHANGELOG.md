@@ -1,5 +1,13 @@
 # Release Notes
 
+## v1.5.0 - 2026-11-11
+
+- Added parameter `$withColumnIndex` to configuration helper `column()` to support returning rows with a single requested column without column index,
+  i.e. each row only contains the single column's value
+- Fixed a lot of documentation errors and generally improved the documentation
+- `worksheet()` and `worksheets()` configuration helper methods support 1-based index numbers in addition to worksheet names
+- Added `Configuration::USE_WORKSHEET_NAMES` to control if the results should be indexed by worksheet names (default) or 1-based worksheet index numbers
+
 ## v1.4.2 - 2026-10-18
 
 - `Metadata::get()` returns the all metadata values as an array if called without parameters

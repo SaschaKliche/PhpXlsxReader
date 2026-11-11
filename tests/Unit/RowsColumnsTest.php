@@ -45,6 +45,79 @@ class RowsColumnsTest extends AbstractTestCase
     }
 
     #[Test]
+    function it_loads_a_single_column()
+    {
+        $expected = ['Table' =>
+            [
+                1 => ['B1' => 'Column B'],
+                2 => ['B2' => -42],
+                3 => ['B3' => 58.12],
+                4 => ['B4' => 9.837844],
+                5 => ['B5' => -273.14],
+                6 => ['B6' => 99.99],
+                7 => ['B7' => -147.192156],
+            ],
+        ];
+
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->worksheet('Table')
+            ->column(column: 'B')
+            ->readAsArray();
+
+        self::assertSame($expected, $data);
+    }
+
+    #[Test]
+    function it_loads_a_single_column_without_returning_the_column_index()
+    {
+        $expected = ['Table' =>
+            [
+                1 => 'Column B',
+                2 => -42,
+                3 => 58.12,
+                4 => 9.837844,
+                5 => -273.14,
+                6 => 99.99,
+                7 => -147.192156,
+            ],
+        ];
+
+        $reader = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->worksheet('Table')
+            ->column(column: 'B', withColumnIndex: false);
+
+        foreach ($reader->read() as $worksheetName => $rows) {
+            foreach ($rows as $rowIndex => $columnValue) {
+                self::assertIsNotArray($columnValue);
+                self::assertSame($expected[$worksheetName][$rowIndex], $columnValue);
+            }
+        }
+    }
+
+    #[Test]
+    function it_loads_a_single_column_as_an_array_without_returning_the_column_index()
+    {
+        $expected = ['Table' =>
+            [
+                1 => 'Column B',
+                2 => -42,
+                3 => 58.12,
+                4 => 9.837844,
+                5 => -273.14,
+                6 => 99.99,
+                7 => -147.192156,
+            ],
+        ];
+
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->worksheet('Table')
+            ->column(column: 'B', withColumnIndex: false)
+            ->readAsArray();
+
+        self::assertSame($expected, $data);
+    }
+
+    #[Test]
     function it_loads_requested_columns_only_from_each_worksheet_into_an_array()
     {
         $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
@@ -96,7 +169,7 @@ class RowsColumnsTest extends AbstractTestCase
     {
         $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
             ->includeMissingCells()
-            // these rows are only requested from worksheet "Sheet1", for other worksheets all rows will be returned
+            // these rows are only requested from worksheet "Sheet1", for other worksheets all columns will be returned
             ->columns(['Sheet1' => ['B', 'c', 4, 5]])
             ->readAsArray();
 
@@ -182,6 +255,22 @@ class RowsColumnsTest extends AbstractTestCase
 
         // "Table" is present in the file, has not been requested with restrictions, is returned as-is
         self::assertSame([1, 2, 3, 4, 5, 6, 7], array_keys($data['Table']));
+    }
+
+    #[Test]
+    function it_loads_requested_rows_only_from_a_specific_worksheet_into_an_array()
+    {
+        $data = XlsxReader::from(self::INPUT_FILES_DIR . 'Basic.xlsx')
+            ->worksheet('Sheet1')
+            ->rows(['Sheet1' => [2, 3, 4, 5]])
+            ->readAsArray();
+
+        self::assertSame(['Sheet1'], array_keys($data));
+
+        // "Sheet1" also has rows 1, 6, 7, 8, but we did not request them so they are missing
+        // rows 2 - 4 have been requested and are present in the file, they are returned
+        // row 5 has been requested but does not exist in the file
+        self::assertSame([2, 3, 4], array_keys($data['Sheet1']));
     }
 
     #[Test]
