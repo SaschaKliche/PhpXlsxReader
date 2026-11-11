@@ -102,14 +102,26 @@ trait ConfigurationHelperTrait
         return $this;
     }
 
-    public function worksheet(string $worksheetName): self
+    public function useWorksheetIndexNumbers(): self
+    {
+        $this->configuration->set(Configuration::USE_WORKSHEET_NAMES, false);
+        return $this;
+    }
+
+    public function useWorksheetNames(): self
+    {
+        $this->configuration->set(Configuration::USE_WORKSHEET_NAMES, true);
+        return $this;
+    }
+
+    public function worksheet(string|int $worksheetName): self
     {
         $this->configuration->set(Configuration::WORKSHEETS_TO_LOAD, [$worksheetName]);
         return $this;
     }
 
     /**
-     * @param string[] $worksheetNames
+     * @param string[]|int[] $worksheetNames
      */
     public function worksheets(array $worksheetNames): self
     {

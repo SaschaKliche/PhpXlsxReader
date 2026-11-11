@@ -420,6 +420,7 @@ $configuration = [
     Configuration::USE_CELL_ADDRESS => true,
     Configuration::USE_DATE_SYSTEM_1900 => false,
     Configuration::WORKSHEETS_TO_LOAD => [],
+    Configuration::USE_WORKSHEET_NAMES => true,
 ];
 
 $reader = new XlsxReader(<pathToInputFile>, $configuration);
@@ -441,6 +442,8 @@ $reader = new XlsxReader(<pathToInputFile>, $configuration);
 - [`useColumnIndex(): XlsxReader`](#usecolumnindex-indexing-cells-by-column-index-number)
 - [`useDateSystem1900(): XlsxReader`](#usedatesystem1900-use-1900-date-system) (default)
 - [`useDateSystem1904(): XlsxReader`](#usedatesystem1904-use-1904-date-system)
+- [`useWorksheetIndexNumbers()`](#useWorksheetIndexNumbers-indexing-the-results-by-worksheet-index-numbers)
+- [`useWorksheetNames()`](#useWorksheetNames-indexing-the-results-by-worksheet-names)
 - [`worksheet(string $worksheetName): XlsxReader`](#worksheet-selecting-a-single-worksheet-to-load-from-a-workbook)
 - [`worksheets(array $worksheetNames): XlsxReader`](#worksheets-selecting-the-worksheets-to-load-from-a-workbook)
 
@@ -981,23 +984,75 @@ $data = XlsxReader::from(<pathToInputFile>)
     ->readAsArray();
 ```
 
+### `useWorksheetIndexNumbers()`: Indexing the results by worksheet index numbers
+
+Syntax:
+```php
+useWorksheetIndexNumbers(): XlsxReader
+```
+
+The equivalent of setting the option `Configuration::USE_WORKSHEET_NAMES` to `false`.
+
+The returned data will be indexed by the 1-based worksheet index number:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+// $data[<worksheet index number (int)>][<rowindex (int)>][<celladdress (string)>]
+$data = XlsxReader::from(<pathToInputFile>)
+    ->useWorksheetIndexNumbers()
+    ->readAsArray();
+```
+
+### `useWorksheetNames()`: Indexing the results by worksheet names
+
+Syntax:
+```php
+useWorksheetNames(): XlsxReader
+```
+
+The equivalent of setting the option `Configuration::USE_WORKSHEET_NAMES` to `true`.
+
+This is the default configuration.
+
+The returned data will be indexed by the worksheet name:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+// $data[<worksheet name (string)>][<rowindex (int)>][<celladdress (string)>]
+$data = XlsxReader::from(<pathToInputFile>)
+    ->useWorksheetNames()
+    ->readAsArray();
+```
+
 ### `worksheet()`: Selecting a single worksheet to load from a workbook
 
 Syntax:
 ```php
-worksheet(string $worksheetName): XlsxReader
+worksheet(string|int $worksheetName): XlsxReader
 ```
 
 The equivalent of setting the option `Configuration::WORKSHEETS_TO_LOAD` to an array with a single value.
 
 By default all worksheets are loaded.
 
+Using the worksheet name:
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
 // $data['Sheet1'][<rowindex (int)>][<celladdress (string)>]
 $data = XlsxReader::from(<pathToInputFile>)
     ->worksheet('Sheet1')
+    ->readAsArray();
+```
+
+Using a 1-based index number:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+// Still uses the worksheet name as the index in the returned data!
+// $data['Sheet1'][<rowindex (int)>][<celladdress (string)>]
+$data = XlsxReader::from(<pathToInputFile>)
+    ->worksheet(1)
     ->readAsArray();
 ```
 
@@ -1012,7 +1067,7 @@ configuration helper methods should be used and only used once.
 
 Syntax:
 ```php
-// string[] $worksheetNames
+// string[]|int[] $worksheetNames
 worksheets(array $worksheetNames): XlsxReader
 ```
 
@@ -1020,6 +1075,7 @@ The equivalent of setting the option `Configuration::WORKSHEETS_TO_LOAD`.
 
 The default is an empty array (`[]`) meaning all worksheets are loaded.
 
+Using worksheet names:
 ```php
 use SaschaKliche\PhpXlsxReader\XlsxReader;
 
@@ -1027,6 +1083,18 @@ use SaschaKliche\PhpXlsxReader\XlsxReader;
 // $data['Sheet2'][<rowindex (int)>][<celladdress (string)>]
 $data = XlsxReader::from(<pathToInputFile>)
     ->worksheets(['Sheet1', 'Sheet2'])
+    ->readAsArray();
+```
+
+Using 1-based index numbers:
+```php
+use SaschaKliche\PhpXlsxReader\XlsxReader;
+
+// Still uses the worksheet name as the index in the returned data!
+// $data['Sheet1'][<rowindex (int)>][<celladdress (string)>]
+// $data['Sheet2'][<rowindex (int)>][<celladdress (string)>]
+$data = XlsxReader::from(<pathToInputFile>)
+    ->worksheets([1, 2])
     ->readAsArray();
 ```
 

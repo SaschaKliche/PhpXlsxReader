@@ -148,7 +148,12 @@ class XlsxReader extends AbstractReader
 
         $this->styles = StylesReader::from($this->filePath);
 
-        $worksheetsToLoad = array_flip($this->configuration->get(Configuration::WORKSHEETS_TO_LOAD));
+        $worksheetsPresent = array_keys($this->worksheetNames);
+        $worksheetsToLoad = $this->normalizeWorksheetsToLoad($worksheetsPresent);
+        $useWorksheetNames = $this->configuration->get(Configuration::USE_WORKSHEET_NAMES);
+        if (!$useWorksheetNames) {
+            $worksheetNamesToIndexNumbers = array_flip($worksheetsPresent);
+        }
 
         foreach ($this->worksheetNames as $worksheetName => $sheetRelationshipId) {
             if ($worksheetsToLoad !== [] && !array_key_exists($worksheetName, $worksheetsToLoad)) {
@@ -165,6 +170,14 @@ class XlsxReader extends AbstractReader
                 $this->worksheetNames
             );
 
+            if (!$useWorksheetNames) {
+                $worksheetName = $worksheetNamesToIndexNumbers[$worksheetName] ?? null;
+                if ($worksheetName === null) {
+                    throw new RuntimeException('Invalid worksheet name "' . $worksheetName . '"');
+                }
+                $worksheetName++; // array values are 0-based
+            }
+
             foreach ($worksheet->load() as $row) {
                 yield $worksheetName => $row;
             }
@@ -173,6 +186,31 @@ class XlsxReader extends AbstractReader
         $this->worksheetsLoaded = true;
 
         $this->benchmarkStop();
+    }
+
+    private function normalizeWorksheetsToLoad(array $worksheetsPresent): array
+    {
+        $worksheetsToLoad = $this->configuration->get(Configuration::WORKSHEETS_TO_LOAD);
+
+        foreach ($worksheetsToLoad as &$worksheetToLoad) {
+            if (is_string($worksheetToLoad)) {
+                continue;
+            }
+
+            if (!is_int($worksheetToLoad)) {
+                throw new RuntimeException('Worksheet to load must be a string or an integer');
+            }
+
+            // worksheet index numbers cannot be used to load the worksheet's files
+            // so they are replace with the worksheet' name
+            $worksheetToLoad = $worksheetsPresent[$worksheetToLoad - 1] ?? null;
+
+            if ($worksheetToLoad === null) {
+                throw new RuntimeException('Worksheet with index ' . $worksheetToLoad . ' not found');
+            }
+        }
+
+        return array_flip($worksheetsToLoad);
     }
 
     /**
