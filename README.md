@@ -48,7 +48,7 @@ This library requires at least PHP 8.3 with the following extensions:
 * `xmlreader`
 * `zip`
 
-PHP 8.3, 8.4, and 8.5 are supported.
+PHP 8.3, 8.4, 8.5, and 8.6 are supported.
 
 ## Installation via Composer
 
